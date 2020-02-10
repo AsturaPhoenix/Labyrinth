@@ -1,123 +1,90 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Maze
 {
-    private class Cell
+    public static MutableCoordinate GetNeighbor(IList<int> coordinate, int side)
     {
-        public bool[] Walls;
-        public Cell Subtree;
-    }
-
-    private struct Wall
-    {
-        public Cell owner;
-        public int side;
-        public Cell other;
-    }
-
-    private readonly int[] dimensions;
-    private readonly Cell[] cells;
-
-    public Maze(params int[] dimensions)
-    {
-        this.dimensions = (int[])dimensions.Clone();
-
-        int[] magnitudes = new int[dimensions.Length + 1];
-        magnitudes[0] = 1;
-        for (int i = 0; i < dimensions.Length; ++i)
+        var neighbor = MutableCoordinate.CopyOf(coordinate);
+        if (side < coordinate.Count)
         {
-            magnitudes[i + 1] = magnitudes[i] * dimensions[i];
-        }
-
-        int volume = magnitudes[dimensions.Length];
-        cells = new Cell[volume];
-        var walls = new List<Wall>(volume * dimensions.Length);
-        for (int i = 0; i < volume; ++i)
-        {
-            cells[i] = new Cell { Walls = new bool[dimensions.Length] };
-            for (int j = 0; j < dimensions.Length; ++j)
-            {
-                var cell = cells[i];
-                cell.Walls[j] = true;
-                cell.Subtree = cell;
-
-                // inner walls only
-                if (i % magnitudes[j + 1] >= magnitudes[j])
-                {
-                    walls.Add(new Wall
-                    {
-                        owner = cell,
-                        side = j,
-                        other = cells[i - magnitudes[j]]
-                    });
-                }
-            }
-        }
-
-        // eliminate n - 1 walls
-        for (int c = 1; c < volume; ++c)
-        {
-            int i = Random.Range(0, walls.Count);
-            var wall = walls[i];
-            walls.RemoveAt(i);
-
-            if (ResolveSubtree(wall.owner) == ResolveSubtree(wall.other))
-            {
-                --c;
-            }
-            else
-            {
-                wall.owner.Walls[wall.side] = false;
-                ResolveSubtree(wall.owner).Subtree = wall.other.Subtree;
-            }
-        }
-    }
-
-    private Cell ResolveSubtree(Cell cell)
-    {
-        while (cell.Subtree != cell)
-        {
-            cell.Subtree = cell.Subtree.Subtree;
-            cell = cell.Subtree;
-        }
-        return cell;
-    }
-
-    public int GetDimension(int dimension) => dimensions[dimension];
-
-    public bool[] GetWalls(params int[] coordinate)
-    {
-        int i = 0;
-        // Outer edge cells are those that exceed bounds in exactly one dimension and are in bounds in others.
-        int outerEdgeDimension = -1;
-        for (int dim = dimensions.Length - 1; dim >= 0; --dim)
-        {
-            bool outerEdge = coordinate[dim] >= dimensions[dim];
-
-            if (coordinate[dim] < 0 || outerEdge && outerEdgeDimension != -1)
-                return new bool[dimensions.Length];
-
-            if (outerEdge)
-                outerEdgeDimension = dim;
-
-            if (outerEdgeDimension == -1)
-                i = i * dimensions[dim] + coordinate[dim];
-        }
-
-        if (outerEdgeDimension != -1)
-        {
-            bool[] walls = new bool[dimensions.Length];
-
-            for (i = 0; i < dimensions.Length; ++i)
-            {
-                walls[i] = i == outerEdgeDimension;
-            }
-            return walls;
+            --neighbor[side];
         }
         else
         {
-            return (bool[])cells[i].Walls.Clone();
+            ++neighbor[side - coordinate.Count];
+        }
+        return neighbor;
+    }
+
+    public class Walls
+    {
+        private Maze maze;
+        private ImmutableCoordinate coordinate;
+        private bool contained;
+
+        public Walls(Maze maze, ImmutableCoordinate coordinate)
+        {
+            this.maze = maze;
+            this.coordinate = coordinate;
+            contained = maze.cells.ContainsCoordinate(coordinate);
+        }
+
+        public bool this[int side]
+        {
+            get
+            {
+                var neighbor = GetNeighbor(coordinate, side);
+                bool neighborContained = maze.cells.ContainsCoordinate(neighbor);
+
+                if ((contained || !(coordinate == maze.Entrance || coordinate == maze.Exit)) ^ (neighborContained || !(neighbor == maze.Entrance || neighbor == maze.Exit)))
+                    return false;
+
+                if (side < coordinate.Dimensionality)
+                    return contained ? maze.cells[coordinate][side] : neighborContained;
+                else
+                    return neighborContained ? maze.cells[neighbor][side - coordinate.Dimensionality] : false;
+            }
+
+            set
+            {
+                var neighbor = GetNeighbor(coordinate, side);
+
+                if (!(contained && maze.cells.ContainsCoordinate(neighbor))) throw new NotSupportedException("Not writable.");
+
+                if (side < coordinate.Dimensionality)
+                {
+                    maze.cells[coordinate][side] = value;
+                }
+                else
+                {
+                    maze.cells[neighbor][side - coordinate.Dimensionality] = value;
+                }
+            }
         }
     }
+
+    private readonly CartesianField<bool[]> cells;
+
+    public ImmutableCoordinate Entrance, Exit;
+
+    public Maze(params int[] dimensions)
+    {
+        cells = new CartesianField<bool[]>(new ImmutableCoordinate(dimensions), _ =>
+        {
+            var walls = new bool[dimensions.Length];
+            for (int i = 0; i < walls.Length; ++i)
+                walls[i] = true;
+            return walls;
+        });
+    }
+
+    public int Volume => cells.Volume;
+
+    public ImmutableCoordinate Dimensions => cells.Dimensions;
+
+    public Walls this[params int[] coordinate] => this[(IList<int>)coordinate];
+
+    public Walls this[IList<int> coordinate] => new Walls(this, new ImmutableCoordinate(coordinate));
 }

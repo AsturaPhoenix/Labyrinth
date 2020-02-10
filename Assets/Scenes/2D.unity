@@ -139,7 +139,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 166229768}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.5, y: 10.5, z: 0}
+  m_LocalPosition: {x: -32.5, y: 32.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 536358672}
@@ -256,6 +256,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2de0432aa14714f4f914e11781589db0, type: 2}
   - {fileID: 11400000, guid: 1e9c4726496ba3e4a8033c955c8e18e1, type: 2}
   - {fileID: 11400000, guid: 090e477d05b9756429b84f3a90424836, type: 2}
+  Width: 32
+  Height: 32
 --- !u!1 &170076733
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +362,7 @@ Camera:
   m_GameObject: {fileID: 534669902}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
@@ -401,7 +403,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -19}
+  m_LocalPosition: {x: 0, y: 1, z: -64}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
