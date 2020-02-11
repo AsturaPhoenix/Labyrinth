@@ -12,8 +12,7 @@ public class Render2D : MonoBehaviour
         var maze = new Maze(Width, Height);
 
         DisjointSetMazeGenerator.Generate(maze);
-        maze.Entrance = new ImmutableVector<int>(0, -1);
-        maze.Exit = new ImmutableVector<int>(Width - 1, Height);
+        LongestPathEndpointGenerator.Generate(maze, Width / 2, 0);
 
         for (int y = 0; y <= maze.Dimensions[1]; ++y)
         {

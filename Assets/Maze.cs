@@ -44,7 +44,7 @@ public class Maze
                 if (side < coordinate.Dimensionality)
                     return contained ? maze.cells[coordinate][side] : neighborContained;
                 else
-                    return neighborContained ? maze.cells[neighbor][side - coordinate.Dimensionality] : false;
+                    return neighborContained ? maze.cells[neighbor][side - coordinate.Dimensionality] : contained;
             }
 
             set

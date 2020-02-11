@@ -60,5 +60,12 @@ namespace Tests
                 values.Add(value);
             Assert.AreEqual(new int[] { 2, 4, 6 }, values);
         }
+
+        [Test]
+        public void ConstructImmutableFromMutable()
+        {
+            var immutable = new ImmutableVector<int>(new MutableVector<int>(1, 2, 3));
+            Assert.AreEqual(new int[] { 1, 2, 3 }, immutable);
+        }
     }
 }
