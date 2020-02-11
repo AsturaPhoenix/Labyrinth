@@ -4,9 +4,9 @@ using System.Linq;
 
 public class Maze
 {
-    public static MutableCoordinate GetNeighbor(IList<int> coordinate, int side)
+    public static MutableVector<int> GetNeighbor(IList<int> coordinate, int side)
     {
-        var neighbor = MutableCoordinate.CopyOf(coordinate);
+        var neighbor = MutableVector<int>.CopyOf(coordinate);
         if (side < coordinate.Count)
         {
             --neighbor[side];
@@ -21,10 +21,10 @@ public class Maze
     public class Walls
     {
         private Maze maze;
-        private ImmutableCoordinate coordinate;
+        private ImmutableVector<int> coordinate;
         private bool contained;
 
-        public Walls(Maze maze, ImmutableCoordinate coordinate)
+        public Walls(Maze maze, ImmutableVector<int> coordinate)
         {
             this.maze = maze;
             this.coordinate = coordinate;
@@ -67,11 +67,11 @@ public class Maze
 
     private readonly CartesianField<bool[]> cells;
 
-    public ImmutableCoordinate Entrance, Exit;
+    public ImmutableVector<int> Entrance, Exit;
 
     public Maze(params int[] dimensions)
     {
-        cells = new CartesianField<bool[]>(new ImmutableCoordinate(dimensions), _ =>
+        cells = new CartesianField<bool[]>(new ImmutableVector<int>(dimensions), _ =>
         {
             var walls = new bool[dimensions.Length];
             for (int i = 0; i < walls.Length; ++i)
@@ -82,9 +82,13 @@ public class Maze
 
     public int Volume => cells.Volume;
 
-    public ImmutableCoordinate Dimensions => cells.Dimensions;
+    public ImmutableVector<int> Dimensions => cells.Dimensions;
 
     public Walls this[params int[] coordinate] => this[(IList<int>)coordinate];
 
-    public Walls this[IList<int> coordinate] => new Walls(this, new ImmutableCoordinate(coordinate));
+    public Walls this[IList<int> coordinate] => new Walls(this, new ImmutableVector<int>(coordinate));
+
+    public bool ContainsCoordinate(params int[] coordinate) => cells.ContainsCoordinate(coordinate);
+
+    public bool ContainsCoordinate(IList<int> coordinate) => cells.ContainsCoordinate(coordinate);
 }

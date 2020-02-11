@@ -4,17 +4,25 @@ using System.Collections.Generic;
 
 public class CartesianField<T> : IEnumerable<T>
 {
-    public readonly ImmutableCoordinate Dimensions;
+    public readonly ImmutableVector<int> Dimensions;
 
     private T[] cells;
 
-    public CartesianField(ImmutableCoordinate dimensions, Func<ImmutableCoordinate, T> factory)
+    public CartesianField(ImmutableVector<int> dimensions, Func<ImmutableVector<int>, T> factory)
     {
         Dimensions = dimensions;
 
-        int volume = 1;
-        foreach (int dimension in dimensions)
-            volume *= dimension;
+        int volume;
+        if (dimensions.Dimensionality == 0)
+        {
+            volume = 0;
+        }
+        else
+        {
+            volume = 1;
+            foreach (int dimension in dimensions)
+                volume *= dimension;
+        }
 
         cells = new T[volume];
         foreach (var coordinate in Coordinates)
@@ -45,11 +53,13 @@ public class CartesianField<T> : IEnumerable<T>
         private set => cells[Flatten(coordinate)] = value;
     }
 
-    public IEnumerable<ImmutableCoordinate> Coordinates
+    public IEnumerable<ImmutableVector<int>> Coordinates
     {
         get
         {
-            var current = MutableCoordinate.Zero(Dimensions.Dimensionality);
+            if (Volume == 0) yield break;
+
+            var current = MutableVector<int>.Zero(Dimensions.Dimensionality);
             yield return current.ToImmutable();
 
             for (int i = 0; i < current.Dimensionality;)
