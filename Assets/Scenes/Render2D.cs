@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.Tilemaps;
 
+[ExecuteAlways]
 public class Render2D : MonoBehaviour
 {
     public TileBase[] Tiles;
     public int Width, Height;
+
+    public GameObject Player;
 
     void Start()
     {
@@ -21,6 +24,9 @@ public class Render2D : MonoBehaviour
                 RenderCell(tilemap, x, y, maze);
             }
         }
+
+        Player.transform.localPosition = new Vector3(
+            1.5f + 2 * maze.Entrance[0], -.5f - 2 * maze.Entrance[1], 0);
     }
 
     private void RenderCell(Tilemap tilemap, int x, int y, Maze maze)
