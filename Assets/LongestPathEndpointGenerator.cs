@@ -3,15 +3,58 @@ using System.Collections.Generic;
 
 public static class LongestPathEndpointGenerator
 {
+    private struct PathMetric : IComparable<PathMetric>
+    {
+        public int Forks, Distance;
+
+        public static PathMetric operator +(PathMetric a, PathMetric b)
+        {
+            return new PathMetric { Forks = a.Forks + b.Forks, Distance = a.Distance + b.Distance };
+        }
+
+        public int CompareTo(PathMetric other)
+        {
+            int cmp = Forks.CompareTo(other.Forks);
+            if (cmp == 0)
+                cmp = Distance.CompareTo(other.Distance);
+            return cmp;
+        }
+
+        public override bool Equals(object other) => other is PathMetric && CompareTo((PathMetric)other) == 0;
+
+        public override int GetHashCode()
+        {
+            var hashCode = -291104344;
+            hashCode = hashCode * -1521134295 + Forks.GetHashCode();
+            hashCode = hashCode * -1521134295 + Distance.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator >(PathMetric a, PathMetric b) => a.CompareTo(b) > 0;
+        public static bool operator <(PathMetric a, PathMetric b) => a.CompareTo(b) < 0;
+        public static bool operator >=(PathMetric a, PathMetric b) => a.CompareTo(b) >= 0;
+        public static bool operator <=(PathMetric a, PathMetric b) => a.CompareTo(b) <= 0;
+        public static bool operator ==(PathMetric a, PathMetric b) => a.CompareTo(b) == 0;
+        public static bool operator !=(PathMetric a, PathMetric b) => a.CompareTo(b) != 0;
+    }
+
     private class Path
     {
-        public int Distance;
         public IList<int> Coordinate;
+        public PathMetric Metric;
+        public bool DeadEnd;
+    }
+
+    private static int ComparePaths(PathMetric commonA, Path pathA, PathMetric commonB, Path pathB)
+    {
+        if (pathA.DeadEnd && !pathB.DeadEnd) return 1;
+        if (!pathA.DeadEnd && pathB.DeadEnd) return -1;
+        return (commonA + pathA.Metric).CompareTo(commonB + pathB.Metric);
     }
 
     private class SearchResult
     {
-        public int CommonDistance;
+        public PathMetric CommonMetric;
         public Path Best, Second;
 
         public void Merge(SearchResult other)
@@ -20,33 +63,33 @@ public static class LongestPathEndpointGenerator
 
             if (Best == null)
             {
-                CommonDistance = other.CommonDistance;
+                CommonMetric = other.CommonMetric;
                 Best = other.Best;
                 Second = other.Second;
             }
-            else if (other.CommonDistance + other.Best.Distance > CommonDistance + Best.Distance)
+            else if (ComparePaths(other.CommonMetric, other.Best, CommonMetric, Best) > 0)
             {
-                if (other.Second != null && other.Second.Distance > other.CommonDistance + CommonDistance + Best.Distance)
+                if (other.Second != null && ComparePaths(new PathMetric(), other.Second, other.CommonMetric + CommonMetric, Best) > 0)
                 {
-                    CommonDistance = other.CommonDistance;
+                    CommonMetric = other.CommonMetric;
                     Best = other.Best;
                     Second = other.Second;
                 }
                 else
                 {
-                    Best.Distance += CommonDistance;
-                    other.Best.Distance += other.CommonDistance;
-                    CommonDistance = 0;
+                    Best.Metric += CommonMetric;
+                    other.Best.Metric += other.CommonMetric;
+                    CommonMetric = new PathMetric();
 
                     Second = Best;
                     Best = other.Best;
                 }
             }
-            else if (Second == null || CommonDistance + other.CommonDistance + other.Best.Distance > Second.Distance)
+            else if (Second == null || ComparePaths(CommonMetric + other.CommonMetric, other.Best, new PathMetric(), Second) > 0)
             {
-                Best.Distance += CommonDistance;
-                other.Best.Distance += other.CommonDistance;
-                CommonDistance = 0;
+                Best.Metric += CommonMetric;
+                other.Best.Metric += other.CommonMetric;
+                CommonMetric = new PathMetric();
 
                 Second = other.Best;
             }
@@ -88,10 +131,13 @@ public static class LongestPathEndpointGenerator
             }
         }
 
-        if (openings <= 1 && IsEdge(maze, coordinate))
-            result.Merge(new SearchResult { Best = new Path { Coordinate = coordinate } });
+        if (result.Second == null && IsEdge(maze, coordinate))
+                result.Merge(new SearchResult { Best = new Path { Coordinate = coordinate, DeadEnd = openings <= 1 } });
 
-        ++result.CommonDistance;
+        if (openings > 2)
+            result.CommonMetric.Forks += openings - 1;
+        ++result.CommonMetric.Distance;
+
         return result;
     }
 
