@@ -25,8 +25,9 @@ public class Render2D : MonoBehaviour
             }
         }
 
-        Player.transform.localPosition = new Vector3(
-            1.5f + 2 * maze.Entrance[0], -.5f - 2 * maze.Entrance[1], 0);
+        var controller = Player.GetComponent<Controller2D>();
+        controller.Maze = maze;
+        controller.Position = new Vector2 { x = maze.Entrance[0], y = maze.Entrance[1] };
     }
 
     private void RenderCell(Tilemap tilemap, int x, int y, Maze maze)
