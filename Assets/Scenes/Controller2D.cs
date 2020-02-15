@@ -68,11 +68,47 @@ public class Controller2D : MonoBehaviour
             directionQueue.Enqueue(3);
 
         int direction = Direction;
-        if (direction != -1 && directionQueue.Count == 1 && Math.Abs(directionQueue.Peek() - direction) == 2)
+        if (direction != -1 && directionQueue.Count > 0 && (Math.Abs(directionQueue.Peek() - direction) == 2 || !CanExecuteNextSoon()))
         {
             velocity = Vector2.zero;
             directionQueue.Clear();
         }
+    }
+
+    private const int PlanAheadDistance = 5;
+
+    private bool CanExecuteNextSoon()
+    {
+        int direction = Direction;
+        Debug.Assert(direction != -1);
+        Debug.Assert(directionQueue.Count > 0);
+
+        var position = Position;
+        var quantized = new Vector2Int((int)Math.Round(position.x), (int)Math.Round(position.y));
+        var step = new Vector2Int(Math.Sign(velocity.x), Math.Sign(velocity.y));
+
+        int nextDirection = directionQueue.Peek();
+
+        Vector2 residual = quantized - position;
+        bool skipCurrent = residual.x != 0 && Math.Sign(residual.x) != step.x ||
+            residual.y != 0 && Math.Sign(residual.y) != step.y;
+
+        for (int distance = 0; distance < PlanAheadDistance; ++distance, quantized += step)
+        {
+            if (skipCurrent)
+            {
+                --distance;
+                skipCurrent = false;
+            }
+            else if (!Maze[quantized.x, quantized.y][nextDirection])
+            {
+                return true;
+            }
+
+            if (Maze[quantized.x, quantized.y][direction])
+                return false;
+        }
+        return false;
     }
 
     void FixedUpdate()
@@ -112,7 +148,9 @@ public class Controller2D : MonoBehaviour
             residual = quantized - Position;
             var nextDirection = directionQueue.Peek();
 
-            if (canExecuteNext && (residual.x == 0 || nextDirection == 0 || nextDirection == 2) && (residual.y == 0 || nextDirection == 1 || nextDirection == 3))
+            if (canExecuteNext && residual.x == 0 && residual.y == 0 ||
+                residual.x != 0 && (nextDirection == 0 || nextDirection == 2) ||
+                residual.y != 0 && (nextDirection == 1 || nextDirection == 3))
             {
                 Direction = directionQueue.Dequeue();
                 Position += velocity * frameTime;
