@@ -17,6 +17,22 @@ public class Render3D2D : MonoBehaviour
         public bool LeftNear, LeftFar, RightNear, RightFar;
     }
 
+    private Quaternion FaceMaze(IList<int> coordinate)
+    {
+        float angle;
+
+        if (coordinate[0] < 0)
+            angle = 90;
+        else if (coordinate[0] >= Width)
+            angle = -90;
+        else if (coordinate[1] < 0)
+            angle = 180;
+        else
+            angle = 0;
+
+        return Quaternion.AngleAxis(angle, Vector3.up);
+    }
+
     void Start()
     {
         var maze = new Maze(Width, Height);
@@ -25,21 +41,12 @@ public class Render3D2D : MonoBehaviour
         LongestPathEndpointGenerator.Generate(maze, Width / 2, 0);
 
         Entrance.transform.localPosition = CellSpace(maze.Entrance);
+        Entrance.transform.localRotation = FaceMaze(maze.Entrance);
         Exit.transform.localPosition = CellSpace(maze.Exit);
+        Exit.transform.localRotation = FaceMaze(maze.Exit);
 
-        Player.transform.localPosition = CellSpace(maze.Entrance);
-        if (maze.Entrance[0] < 0)
-        {
-            Player.transform.Rotate(0, 90, 0);
-        }
-        else if (maze.Entrance[0] >= Width)
-        {
-            Player.transform.Rotate(0, -90, 0);
-        }
-        else if (maze.Entrance[1] < 0)
-        {
-            Player.transform.Rotate(0, 180, 0);
-        }
+        Player.transform.localPosition = Entrance.transform.localPosition;
+        Player.transform.localRotation = Entrance.transform.localRotation;
 
         Ground.transform.localScale = new Vector3(Width, 1, Height);
 
