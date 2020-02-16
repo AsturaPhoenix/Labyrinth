@@ -88,7 +88,7 @@ public class Render3D2D : MonoBehaviour
                         bevel.LeftFar = maze[x - 1, y][1];
                         var transform = CreateWall(y - wallStart, bevel).transform;
                         transform.localPosition = WallSpace(x, (wallStart + y) / 2.0f);
-                        transform.Rotate(0, -90, 0);
+                        transform.localRotation = Quaternion.AngleAxis(-90, Vector3.up);
                         wallStart = -1;
                     }
                 }
