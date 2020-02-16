@@ -56,22 +56,56 @@ public class Controller2D : MonoBehaviour
         }
     }
 
+    public void EnqueueDirection(int direction)
+    {
+        if (velocity == Vector2.zero && directionQueue.Count == 0)
+            PrimeMovement(direction);
+
+        directionQueue.Enqueue(direction);
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-            directionQueue.Enqueue(0);
+            EnqueueDirection(0);
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-            directionQueue.Enqueue(2);
+            EnqueueDirection(2);
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-            directionQueue.Enqueue(1);
+            EnqueueDirection(1);
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-            directionQueue.Enqueue(3);
+            EnqueueDirection(3);
+    }
 
-        int direction = Direction;
-        if (direction != -1 && directionQueue.Count > 0 && (Math.Abs(directionQueue.Peek() - direction) == 2 || !CanExecuteNextSoon()))
+    private void PrimeMovement(int nextDirection)
+    {
+        Debug.Assert(velocity == Vector2.zero);
+
+        var position = Position;
+        var quantized = new Vector2Int((int)Math.Round(position.x), (int)Math.Round(position.y));
+        Vector2 residual = quantized - position;
+
+        Maze.Walls walls = Maze[quantized.x, quantized.y];
+
+        if (!walls[nextDirection] &&
+            ((nextDirection == 0 || nextDirection == 2) && residual.y != 0 ||
+            (nextDirection == 1 || nextDirection == 3) && residual.x != 0))
         {
-            velocity = Vector2.zero;
-            directionQueue.Clear();
+            if (residual.x < 0)
+            {
+                Direction = 0;
+            }
+            else if (residual.x > 0)
+            {
+                Direction = 2;
+            }
+            else if (residual.y < 0)
+            {
+                Direction = 1;
+            }
+            else if (residual.y > 0)
+            {
+                Direction = 3;
+            }
         }
     }
 
@@ -111,26 +145,36 @@ public class Controller2D : MonoBehaviour
         return false;
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
         var position = Position;
         var quantized = new Vector2Int((int)Math.Round(position.x), (int)Math.Round(position.y));
-        float frameTime = Time.deltaTime;
+        float frameTime = Time.fixedDeltaTime;
 
         Maze.Walls walls = Maze[quantized.x, quantized.y];
-        bool canExecuteNext = directionQueue.Count > 0 && !walls[directionQueue.Peek()];
+        var nextDirection = directionQueue.Count > 0 ? directionQueue.Peek() : -1;
+        bool canExecuteNext = nextDirection != -1 && !walls[nextDirection];
 
         Vector2 residual;
 
         if (velocity != Vector2.zero)
         {
+            var direction = Direction;
+
+            if (nextDirection != -1 && (Math.Abs(nextDirection - direction) == 2 || !CanExecuteNextSoon()))
+            {
+                velocity = Vector2.zero;
+                directionQueue.Clear();
+                return;
+            }
+
             residual = quantized - position;
 
             float timeToCenter = residual.x != 0 ? residual.x / velocity.x :
                          residual.y != 0 ? residual.y / velocity.y :
                          0;
 
-            if (timeToCenter > frameTime || !(walls[Direction] || canExecuteNext && timeToCenter >= 0))
+            if (timeToCenter > frameTime || !(walls[direction] || canExecuteNext && timeToCenter >= 0))
             {
                 Position += velocity * frameTime;
                 return;
@@ -146,7 +190,6 @@ public class Controller2D : MonoBehaviour
         if (directionQueue.Count > 0)
         {
             residual = quantized - Position;
-            var nextDirection = directionQueue.Peek();
 
             if (canExecuteNext && residual.x == 0 && residual.y == 0 ||
                 residual.x != 0 && (nextDirection == 0 || nextDirection == 2) ||
