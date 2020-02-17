@@ -195,8 +195,7 @@ MonoBehaviour:
   WallHeight: 0.75
   WallThickness: 0.2
   Ground: {fileID: 50615093}
-  WallPlane: {fileID: 368093277678913628, guid: b9d18a8efe9907f4694917d0bf562692,
-    type: 3}
+  Wall: {fileID: 368093277678913628, guid: b9d18a8efe9907f4694917d0bf562692, type: 3}
   Player: {fileID: 1641268617}
   Entrance: {fileID: 900006903}
   Exit: {fileID: 1682271976}
