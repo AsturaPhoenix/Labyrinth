@@ -9,7 +9,7 @@ namespace Tests
         public void PrimeAtIntersectionBoundary()
         {
             var o = new GameObject();
-            var controller = o.AddComponent<Controller2D>();
+            var controller = o.AddComponent<Labyrinth2D.Controller>();
             var maze = controller.Maze = new Maze(3, 2);
             controller.Speed = 1 / Time.fixedDeltaTime;
 
