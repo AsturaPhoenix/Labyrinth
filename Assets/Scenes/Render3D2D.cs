@@ -44,6 +44,14 @@ public class Render3D2D : MonoBehaviour
         Player.transform.localRotation = Entrance.transform.localRotation;
 
         Ground.transform.localScale = new Vector3(Width, 1, Height);
+        var groundRenderer = Ground.GetComponentInChildren<Renderer>();
+        foreach (var material in groundRenderer.materials)
+        {
+            foreach (int id in material.GetTexturePropertyNameIDs())
+            {
+                material.SetTextureScale(id, new Vector2(Width, Height));
+            }
+        }
 
         for (int y = 0; y <= maze.Dimensions[1]; ++y)
         {
