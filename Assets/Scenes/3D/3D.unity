@@ -691,7 +691,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Acceleration: 25
   Speed: 2.5
-  Torque: 2.5
+  AngularAcceleration: 100
+  LevelingConstant: 100
+  LevelingAcceleration: 100
+  ScrollMultiplier: 8
 --- !u!135 &2029623710
 SphereCollider:
   m_ObjectHideFlags: 0

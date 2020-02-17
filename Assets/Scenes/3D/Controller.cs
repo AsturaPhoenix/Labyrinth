@@ -4,9 +4,10 @@ namespace Labyrinth3D
 {
     public class Controller : MonoBehaviour
     {
-        public float Acceleration, Speed, Torque;
+        public float Acceleration, Speed, AngularAcceleration, LevelingConstant, LevelingAcceleration, ScrollMultiplier = 1;
 
         private Rigidbody physics;
+        private Vector2 scroll = new Vector2();
 
         private void Start()
         {
@@ -14,19 +15,27 @@ namespace Labyrinth3D
             Cursor.lockState = CursorLockMode.Locked;
         }
 
+        private void Update()
+        {
+            scroll += ScrollMultiplier * Input.mouseScrollDelta;
+        }
+
         private void FixedUpdate()
         {
-            if (Input.GetKey(KeyCode.LeftArrow))
-                physics.AddRelativeTorque(0, -Torque, 0);
-            if (Input.GetKey(KeyCode.RightArrow))
-                physics.AddRelativeTorque(0, Torque, 0);
-            if (Input.GetKey(KeyCode.Q))
-                physics.AddRelativeTorque(0, 0, Torque);
-            if (Input.GetKey(KeyCode.E))
-                physics.AddRelativeTorque(0, 0, -Torque);
+            float yaw = 0;
 
-            physics.AddRelativeTorque(-Torque * Input.GetAxis("Mouse Y"), Torque * Input.GetAxis("Mouse X"), 0);
-            
+            if (Input.GetKey(KeyCode.LeftArrow))
+                --yaw;
+            if (Input.GetKey(KeyCode.RightArrow))
+                ++yaw;
+
+            yaw += Input.GetAxis("Mouse X");
+            physics.AddTorque(0, AngularAcceleration * yaw, 0, ForceMode.Acceleration);
+
+            float dTheta = (180 - (180 + physics.rotation.eulerAngles.z) % 360) * Mathf.Deg2Rad;
+            physics.AddRelativeTorque(-AngularAcceleration * Input.GetAxis("Mouse Y"), 0,
+                Mathf.Clamp(LevelingConstant * dTheta, -LevelingAcceleration, LevelingAcceleration), ForceMode.Acceleration);
+
             Vector3 direction = new Vector3();
 
             if (Input.GetKey(KeyCode.A))
@@ -37,10 +46,31 @@ namespace Labyrinth3D
                 ++direction.z;
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || Input.GetMouseButton(1))
                 --direction.z;
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.R))
                 ++direction.y;
-            if (Input.GetKey(KeyCode.LeftControl))
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.F)) 
                 --direction.y;
+
+            if (scroll.x >= 1)
+            {
+                ++direction.x;
+                --scroll.x;
+            }
+            else if (scroll.x <= -1)
+            {
+                --direction.x;
+                ++scroll.x;
+            }
+            if (scroll.y >= 1)
+            {
+                ++direction.y;
+                --scroll.y;
+            }
+            else if (scroll.y <= -1)
+            {
+                --direction.y;
+                ++scroll.y;
+            }
 
             Vector3 acceleration = Acceleration * (physics.rotation * direction.normalized);
             if ((physics.velocity + acceleration * Time.fixedDeltaTime).sqrMagnitude > Speed * Speed)
