@@ -190,8 +190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b477ccf583b576043b36e591a2d9fc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 32
-  Height: 32
+  Width: 24
+  Height: 24
   WallHeight: 0.75
   WallThickness: 0.2
   Ground: {fileID: 50615093}
