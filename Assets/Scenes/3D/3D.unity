@@ -163,7 +163,7 @@ MonoBehaviour:
   Depth: 5
   Wall: {fileID: 6249625685770406024, guid: 71a3924fb49356544aaab7124c601374, type: 3}
   Edge: {fileID: 6764054552963674988, guid: 3cc2e243446e05443933f5e11bdbff85, type: 3}
-  Corner: {fileID: 5315006303745732877, guid: ae30465a9a9d25748985a9d32de8ab34, type: 3}
+  Corner: {fileID: 0}
   Player: {fileID: 2029623705}
   Entrance: {fileID: 969843763}
   Exit: {fileID: 1642709903}
@@ -198,8 +198,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174730527}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.05}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
   m_Children: []
   m_Father: {fileID: 1642709904}
   m_RootOrder: 0
@@ -376,8 +376,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1255230056}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.05}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
   m_Children: []
   m_Father: {fileID: 969843764}
   m_RootOrder: 0

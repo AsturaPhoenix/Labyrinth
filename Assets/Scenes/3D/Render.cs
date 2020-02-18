@@ -90,6 +90,7 @@ namespace Labyrinth3D
                             transform.localRotation = Quaternion.AngleAxis(-90, Vector3.up);
                         }
 
+                        if (Corner != null)
                         {
                             var transform = Instantiate(Corner).transform;
                             transform.parent = this.transform;
