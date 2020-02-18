@@ -58,6 +58,11 @@ namespace Labyrinth2D
             }
         }
 
+        private void Start()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
         public void EnqueueDirection(int direction)
         {
             if (velocity == Vector2.zero && directionQueue.Count == 0)
@@ -78,10 +83,8 @@ namespace Labyrinth2D
                 EnqueueDirection(3);
         }
 
-        private void PrimeMovement(int nextDirection)
+        private bool PrimeMovement(int nextDirection)
         {
-            Debug.Assert(velocity == Vector2.zero);
-
             var position = Position;
             var quantized = new Vector2Int((int)Math.Round(position.x), (int)Math.Round(position.y));
             Vector2 residual = quantized - position;
@@ -104,11 +107,13 @@ namespace Labyrinth2D
                 {
                     Direction = 1;
                 }
-                else if (residual.y > 0)
+                else // (residual.y > 0)
                 {
                     Direction = 3;
                 }
+                return true;
             }
+            return false;
         }
 
         private const int PlanAheadDistance = 5;
@@ -163,11 +168,31 @@ namespace Labyrinth2D
             {
                 var direction = Direction;
 
-                if (nextDirection != -1 && (Math.Abs(nextDirection - direction) == 2 || !CanExecuteNextSoon()))
+                if (nextDirection != -1)
                 {
-                    velocity = Vector2.zero;
-                    directionQueue.Clear();
-                    return;
+                    if (Math.Abs(nextDirection - direction) == 2)
+                    {
+                        // Reverse instantaneously and recalculate state.
+                        Direction = direction = directionQueue.Dequeue();
+                        nextDirection = directionQueue.Count > 0 ? directionQueue.Peek() : -1;
+                        canExecuteNext = nextDirection != -1 && !walls[nextDirection];
+                    }
+                    else if (nextDirection == direction)
+                    {
+                        velocity = Vector2.zero;
+                        directionQueue.Clear();
+                        return;
+                    }
+                    else if (!CanExecuteNextSoon())
+                    {
+                        // If we can still make the maneuver now by backtracking (e.g. we just missed it), do that. Otherwise stop and bail.
+                        if (!PrimeMovement(nextDirection))
+                        {
+                            velocity = Vector2.zero;
+                            directionQueue.Clear();
+                            return;
+                        }
+                    }
                 }
 
                 residual = quantized - position;
