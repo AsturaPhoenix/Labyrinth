@@ -29,11 +29,11 @@ namespace Labyrinth3D
             if (Input.GetKey(KeyCode.RightArrow))
                 ++yaw;
 
-            yaw += Input.GetAxis("Mouse X");
+            yaw += Input2.GetAxis("Mouse X");
             physics.AddTorque(0, AngularAcceleration * yaw, 0, ForceMode.Acceleration);
 
             float dTheta = (180 - (180 + physics.rotation.eulerAngles.z) % 360) * Mathf.Deg2Rad;
-            physics.AddRelativeTorque(-AngularAcceleration * Input.GetAxis("Mouse Y"), 0,
+            physics.AddRelativeTorque(-AngularAcceleration * Input2.GetAxis("Mouse Y"), 0,
                 Mathf.Clamp(LevelingConstant * dTheta, -LevelingAcceleration, LevelingAcceleration), ForceMode.Acceleration);
 
             Vector3 direction = new Vector3();

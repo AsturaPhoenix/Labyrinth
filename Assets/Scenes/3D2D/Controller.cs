@@ -32,7 +32,7 @@ namespace Labyrinth3D2D
             if (Input.GetKey(KeyCode.RightArrow))
                 physics.AddRelativeTorque(0, Torque, 0);
 
-            physics.AddRelativeTorque(0, Torque * Input.GetAxis("Mouse X"), 0);
+            physics.AddRelativeTorque(0, Torque * Input2.GetAxis("Mouse X"), 0);
 
             if (Grounded)
             {
