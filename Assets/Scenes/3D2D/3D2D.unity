@@ -153,6 +153,7 @@ GameObject:
   m_Component:
   - component: {fileID: 269996179}
   - component: {fileID: 269996180}
+  - component: {fileID: 269996181}
   m_Layer: 0
   m_Name: Maze
   m_TagString: Untagged
@@ -199,6 +200,18 @@ MonoBehaviour:
   Player: {fileID: 1641268617}
   Entrance: {fileID: 900006903}
   Exit: {fileID: 1682271976}
+--- !u!114 &269996181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269996178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3d3c53eb58b0cc448d04cea9841563a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &460546253
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +616,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1641268618}
   - component: {fileID: 1641268620}
+  - component: {fileID: 1641268621}
   - component: {fileID: 1641268619}
   m_Layer: 0
   m_Name: Player
@@ -658,6 +672,18 @@ MonoBehaviour:
   Speed: 2.5
   Torque: 2.5
   JumpSpeed: 3
+--- !u!114 &1641268621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1641268617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 784d4b70c1e405a439fc728742d47908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1682271976
 GameObject:
   m_ObjectHideFlags: 0

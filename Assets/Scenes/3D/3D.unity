@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6243613}
   - component: {fileID: 6243614}
+  - component: {fileID: 6243615}
   m_Layer: 0
   m_Name: Maze
   m_TagString: Untagged
@@ -167,6 +168,18 @@ MonoBehaviour:
   Player: {fileID: 2029623705}
   Entrance: {fileID: 969843763}
   Exit: {fileID: 1642709903}
+--- !u!114 &6243615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6243612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3d3c53eb58b0cc448d04cea9841563a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &174730527
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,6 +617,7 @@ GameObject:
   - component: {fileID: 2029623707}
   - component: {fileID: 2029623706}
   - component: {fileID: 2029623709}
+  - component: {fileID: 2029623712}
   - component: {fileID: 2029623711}
   - component: {fileID: 2029623710}
   m_Layer: 0
@@ -706,7 +720,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.35
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2029623711
 Rigidbody:
@@ -724,3 +738,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2029623712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029623705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 784d4b70c1e405a439fc728742d47908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

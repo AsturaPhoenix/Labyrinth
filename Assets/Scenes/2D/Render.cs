@@ -4,16 +4,32 @@ using UnityEngine.Tilemaps;
 namespace Labyrinth2D
 {
     [ExecuteAlways]
-    public class Render : MonoBehaviour
+    public class Render : MonoBehaviour, Game
     {
         public TileBase[] Tiles;
         public int Width, Height;
 
         public GameObject Player;
 
-        void Start()
+        private Tilemap tilemap;
+
+        public void NewMaze()
         {
-            var tilemap = GetComponent<Tilemap>();
+            tilemap.ClearAllTiles();
+            Regenerate();
+        }
+
+        public void Settings() { }
+
+        public void Export() { }
+
+        public bool Import()
+        {
+            return false;
+        }
+
+        private void Regenerate()
+        {
             var maze = new Maze(Width, Height);
 
             DisjointSetMazeGenerator.Generate(maze);
@@ -23,16 +39,23 @@ namespace Labyrinth2D
             {
                 for (int x = 0; x <= maze.Dimensions[0]; ++x)
                 {
-                    RenderCell(tilemap, x, y, maze);
+                    RenderCell(x, y, maze);
                 }
             }
 
             var controller = Player.GetComponent<Controller>();
+            controller.Stop();
             controller.Maze = maze;
             controller.Position = new Vector2 { x = maze.Entrance[0], y = maze.Entrance[1] };
         }
 
-        private void RenderCell(Tilemap tilemap, int x, int y, Maze maze)
+        void Start()
+        {
+            tilemap = GetComponent<Tilemap>();
+            Regenerate();
+        }
+
+        private void RenderCell(int x, int y, Maze maze)
         {
             Maze.Walls localWalls = maze[x, y];
             bool prevLeft = maze[x, y - 1][0], prevTop = maze[x - 1, y][1];

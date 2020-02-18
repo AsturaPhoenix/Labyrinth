@@ -3,13 +3,15 @@ using UnityEngine;
 
 namespace Labyrinth3D2D
 {
-    public class Render : MonoBehaviour
+    public class Render : MonoBehaviour, Game
     {
         private const float Z_PEACEMAKER = .99995f;
 
         public int Width, Height;
         public float WallHeight, WallThickness;
         public GameObject Ground, Wall, Player, Entrance, Exit;
+
+        private GameObject mazeElements;
 
         private Vector3 WallSpace(float x, float y) => new Vector3(x - Width / 2.0f, 0, Height / 2.0f - y);
         private Vector3 CellSpace(IList<int> coordinate) => WallSpace(coordinate[0] + .5f, coordinate[1] + .5f);
@@ -30,8 +32,28 @@ namespace Labyrinth3D2D
             return Quaternion.AngleAxis(angle, Vector3.up);
         }
 
+
+        public void NewMaze()
+        {
+            Destroy(mazeElements);
+            Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            Start();
+        }
+
+        public void Settings() { }
+
+        public void Export() { }
+
+        public bool Import()
+        {
+            return false;
+        }
+
         void Start()
         {
+            mazeElements = new GameObject();
+            mazeElements.transform.parent = transform;
+
             var maze = new Maze(Width, Height);
 
             DisjointSetMazeGenerator.Generate(maze);
@@ -99,14 +121,12 @@ namespace Labyrinth3D2D
             }
         }
 
-        private GameObject CreateWall(int length)
+        private Transform CreateWall(int length)
         {
-            var wall = new GameObject();
-            wall.transform.parent = transform;
+            var wall = new GameObject().transform;
+            wall.parent = mazeElements.transform;
 
-            var geometry = Instantiate(Wall).transform;
-            geometry.parent = wall.transform;
-            geometry.localScale = new Vector3((length + WallThickness) * Z_PEACEMAKER, WallHeight, WallThickness);
+            Instantiate(Wall, wall).transform.localScale = new Vector3((length + WallThickness) * Z_PEACEMAKER, WallHeight, WallThickness);
             return wall;
         }
     }

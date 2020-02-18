@@ -58,6 +58,12 @@ namespace Labyrinth2D
             }
         }
 
+        public void Stop()
+        {
+            velocity = Vector2.zero;
+            directionQueue.Clear();
+        }
+
         private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
