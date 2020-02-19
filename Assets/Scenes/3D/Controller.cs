@@ -23,22 +23,28 @@ namespace Labyrinth3D
         private void Update()
         {
             scroll += ScrollMultiplier * Input.mouseScrollDelta;
+
+            physics.AddTorque(0, AngularAcceleration * Input2.GetAxis("Mouse X"), 0, ForceMode.Acceleration);
+            physics.AddRelativeTorque(-AngularAcceleration * Input2.GetAxis("Mouse Y"), 0, 0, ForceMode.Acceleration);
         }
 
         private void FixedUpdate()
         {
-            float yaw = 0;
+            Vector2 rotation = new Vector2();
 
             if (Input.GetKey(KeyCode.LeftArrow))
-                --yaw;
+                --rotation.y;
             if (Input.GetKey(KeyCode.RightArrow))
-                ++yaw;
-
-            yaw += Input2.GetAxis("Mouse X");
-            physics.AddTorque(0, AngularAcceleration * yaw, 0, ForceMode.Acceleration);
+                ++rotation.y;
+            if (Input.GetKey(KeyCode.DownArrow))
+                --rotation.x;
+            if (Input.GetKey(KeyCode.UpArrow))
+                ++rotation.x;
+            
+            physics.AddTorque(0, AngularAcceleration * rotation.y, 0, ForceMode.Acceleration);
 
             float dTheta = (180 - (180 + physics.rotation.eulerAngles.z) % 360) * Mathf.Deg2Rad;
-            physics.AddRelativeTorque(-AngularAcceleration * Input2.GetAxis("Mouse Y"), 0,
+            physics.AddRelativeTorque(AngularAcceleration * rotation.x, 0,
                 Mathf.Clamp(LevelingConstant * dTheta, -LevelingAcceleration, LevelingAcceleration), ForceMode.Acceleration);
 
             Vector3 direction = new Vector3();
@@ -47,9 +53,9 @@ namespace Labyrinth3D
                 --direction.x;
             if (Input.GetKey(KeyCode.D))
                 ++direction.x;
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || Input.GetMouseButton(0))
+            if (Input.GetKey(KeyCode.W) || Input.GetMouseButton(0))
                 ++direction.z;
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || Input.GetMouseButton(1))
+            if (Input.GetKey(KeyCode.S) || Input.GetMouseButton(1))
                 --direction.z;
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.R))
                 ++direction.y;

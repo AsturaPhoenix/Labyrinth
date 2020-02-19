@@ -719,7 +719,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Acceleration: 25
   Speed: 2.5
-  AngularAcceleration: 100
+  AngularAcceleration: 90
   LevelingConstant: 100
   LevelingAcceleration: 50
   ScrollMultiplier: 8

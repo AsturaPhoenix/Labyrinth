@@ -28,6 +28,8 @@ namespace Labyrinth3D2D
         {
             if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(2)) && Grounded)
                 jump = true;
+
+            physics.AddRelativeTorque(0, Torque * Input2.GetAxis("Mouse X"), 0);
         }
 
         private void FixedUpdate()
@@ -36,8 +38,6 @@ namespace Labyrinth3D2D
                 physics.AddRelativeTorque(0, -Torque, 0);
             if (Input.GetKey(KeyCode.RightArrow))
                 physics.AddRelativeTorque(0, Torque, 0);
-
-            physics.AddRelativeTorque(0, Torque * Input2.GetAxis("Mouse X"), 0);
 
             if (Grounded)
             {
