@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Labyrinth3D
@@ -8,6 +9,7 @@ namespace Labyrinth3D
         public int Width, Height, Depth;
         public GameObject Wall, Edge, Corner, Player, Entrance, Exit;
 
+        private Maze maze;
         private GameObject mazeElements;
 
         private static Vector3 WallSpace(float x, float y, float z) => new Vector3(x, -y, z);
@@ -15,18 +17,21 @@ namespace Labyrinth3D
 
         private Quaternion FaceMaze(IList<int> coordinate)
         {
-            if (coordinate[0] < 0)
-                return Quaternion.AngleAxis(90, Vector3.up);
-            else if (coordinate[0] >= Width)
-                return Quaternion.AngleAxis(-90, Vector3.up);
-            else if (coordinate[1] < 0)
-                return Quaternion.AngleAxis(90, Vector3.right);
-            else if (coordinate[1] >= Height)
-                return Quaternion.AngleAxis(-90, Vector3.right);
-            else if (coordinate[2] >= Depth)
-                return Quaternion.AngleAxis(180, Vector3.up);
-            else
-                return Quaternion.identity;
+            switch (maze.IngressDirection(coordinate))
+            {
+                case 0:
+                    return Quaternion.AngleAxis(-90, Vector3.up);
+                case 1:
+                    return Quaternion.AngleAxis(-90, Vector3.right);
+                case 2:
+                    return Quaternion.AngleAxis(180, Vector3.up);
+                case 3:
+                    return Quaternion.AngleAxis(90, Vector3.up);
+                case 4:
+                    return Quaternion.AngleAxis(90, Vector3.right);
+                default:
+                    return Quaternion.identity;
+            }
         }
 
         public void NewMaze()
@@ -52,7 +57,7 @@ namespace Labyrinth3D
             mazeElements = new GameObject();
             mazeElements.transform.parent = transform;
 
-            var maze = new Maze(Width, Height, Depth);
+            maze = new Maze(Width, Height, Depth);
 
             DisjointSetMazeGenerator.Generate(maze);
             LongestPathEndpointGenerator.Generate(maze, Width / 2, Height / 2, 0);

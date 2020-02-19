@@ -90,4 +90,17 @@ public class Maze
     public bool ContainsCoordinate(params int[] coordinate) => cells.ContainsCoordinate(coordinate);
 
     public bool ContainsCoordinate(IList<int> coordinate) => cells.ContainsCoordinate(coordinate);
+
+    public int IngressDirection(IList<int> coordinate)
+    {
+        if (coordinate.Count != Dimensions.Dimensionality) throw new ArgumentException("Dimensionality mismatch.");
+
+        for (int i = 0; i < Dimensions.Dimensionality; ++i)
+        {
+            if (coordinate[i] < 0) return i + Dimensions.Dimensionality;
+            if (coordinate[i] >= Dimensions[i]) return i;
+        }
+        
+        throw new ArgumentException("Coordinate is not outside maze.");
+    }
 }

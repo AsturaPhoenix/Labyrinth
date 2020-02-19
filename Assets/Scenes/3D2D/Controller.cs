@@ -19,6 +19,11 @@ namespace Labyrinth3D2D
             y0 = physics.position.y;
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            GameOverMenu.Instantiate(GetComponentInParent<Game>());
+        }
+
         private void Update()
         {
             if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(2)) && Grounded)

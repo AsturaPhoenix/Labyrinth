@@ -11,27 +11,13 @@ namespace Labyrinth3D2D
         public float WallHeight, WallThickness;
         public GameObject Ground, Wall, Player, Entrance, Exit;
 
+        private Maze maze;
         private GameObject mazeElements;
 
         private Vector3 WallSpace(float x, float y) => new Vector3(x - Width / 2.0f, 0, Height / 2.0f - y);
         private Vector3 CellSpace(IList<int> coordinate) => WallSpace(coordinate[0] + .5f, coordinate[1] + .5f);
 
-        private Quaternion FaceMaze(IList<int> coordinate)
-        {
-            float angle;
-
-            if (coordinate[0] < 0)
-                angle = 90;
-            else if (coordinate[0] >= Width)
-                angle = -90;
-            else if (coordinate[1] < 0)
-                angle = 180;
-            else
-                angle = 0;
-
-            return Quaternion.AngleAxis(angle, Vector3.up);
-        }
-
+        private Quaternion FaceMaze(IList<int> coordinate) => Quaternion.AngleAxis(90 * maze.IngressDirection(coordinate) - 90, Vector3.up);
 
         public void NewMaze()
         {
@@ -54,7 +40,7 @@ namespace Labyrinth3D2D
             mazeElements = new GameObject();
             mazeElements.transform.parent = transform;
 
-            var maze = new Maze(Width, Height);
+            maze = new Maze(Width, Height);
 
             DisjointSetMazeGenerator.Generate(maze);
             LongestPathEndpointGenerator.Generate(maze, Width / 2, 0);

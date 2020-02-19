@@ -159,9 +159,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2252de328f2bdf64bb7d931bebacb05a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 5
-  Height: 5
-  Depth: 5
+  Width: 6
+  Height: 6
+  Depth: 6
   Wall: {fileID: 6249625685770406024, guid: 71a3924fb49356544aaab7124c601374, type: 3}
   Edge: {fileID: 6764054552963674988, guid: 3cc2e243446e05443933f5e11bdbff85, type: 3}
   Corner: {fileID: 0}
@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 174730531}
   - component: {fileID: 174730530}
   - component: {fileID: 174730529}
+  - component: {fileID: 174730536}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -327,6 +328,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174730527}
   m_Mesh: {fileID: 4300000, guid: 51ac5a6bde6f3b249aa0cab0ab02fa8d, type: 3}
+--- !u!65 &174730536
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 174730527}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 0.3}
+  m_Center: {x: 0, y: 0, z: -0.35}
 --- !u!1 &969843763
 GameObject:
   m_ObjectHideFlags: 0
@@ -707,7 +721,7 @@ MonoBehaviour:
   Speed: 2.5
   AngularAcceleration: 100
   LevelingConstant: 100
-  LevelingAcceleration: 100
+  LevelingAcceleration: 50
   ScrollMultiplier: 8
 --- !u!135 &2029623710
 SphereCollider:

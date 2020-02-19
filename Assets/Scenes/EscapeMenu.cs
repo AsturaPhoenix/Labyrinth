@@ -1,16 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class EscapeMenu : MonoBehaviour
+public class EscapeMenu : MonoBehaviour, Pause
 {
-    private GameObject instance;
-    
-    void Update()
+    public void Pause() => enabled = false;
+    public void Resume() => enabled = true;
+
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && !instance)
-        {
-            instance = Instantiate(Resources.Load<GameObject>("Game Over Menu"), transform);
-            instance.GetComponent<GameOverMenu>().Parent = gameObject;
-        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+            GameOverMenu.Instantiate(gameObject);
     }
 }

@@ -11,6 +11,7 @@ namespace Labyrinth2D
 
         private Vector2 velocity;
         private Queue<int> directionQueue = new Queue<int>();
+        private bool reachedExit;
 
         public Vector2 Position
         {
@@ -58,6 +59,32 @@ namespace Labyrinth2D
             }
         }
 
+        private interface MovementWalls
+        {
+            bool this[int side] { get; }
+        }
+
+        private struct RealWalls : MovementWalls
+        {
+            public Maze.Walls walls;
+            public bool this[int side] => walls[side];
+        }
+
+        private struct EndpointWalls : MovementWalls
+        {
+            public int opening;
+            public bool this[int side] => side != opening;
+        }
+
+        private MovementWalls GetMovementWalls(Vector2Int coordinate)
+        {
+            var cv = new ImmutableVector<int>(coordinate.x, coordinate.y);
+            if (cv == Maze.Entrance || cv == Maze.Exit)
+                return new EndpointWalls { opening = Maze.IngressDirection(cv) };
+            else
+                return new RealWalls { walls = Maze[cv] };
+        }
+
         public void Stop()
         {
             velocity = Vector2.zero;
@@ -95,7 +122,7 @@ namespace Labyrinth2D
             var quantized = new Vector2Int((int)Math.Round(position.x), (int)Math.Round(position.y));
             Vector2 residual = quantized - position;
 
-            Maze.Walls walls = Maze[quantized.x, quantized.y];
+            var walls = GetMovementWalls(quantized);
 
             if (!walls[nextDirection] &&
                 ((nextDirection == 0 || nextDirection == 2) && residual.y != 0 ||
@@ -142,17 +169,18 @@ namespace Labyrinth2D
 
             for (int distance = 0; distance < PlanAheadDistance; ++distance, quantized += step)
             {
+                var walls = GetMovementWalls(quantized);
                 if (skipCurrent)
                 {
                     --distance;
                     skipCurrent = false;
                 }
-                else if (!Maze[quantized.x, quantized.y][nextDirection])
+                else if (!walls[nextDirection])
                 {
                     return true;
                 }
 
-                if (Maze[quantized.x, quantized.y][direction])
+                if (walls[direction])
                     return false;
             }
             return false;
@@ -164,7 +192,7 @@ namespace Labyrinth2D
             var quantized = new Vector2Int((int)Math.Round(position.x), (int)Math.Round(position.y));
             float frameTime = Time.fixedDeltaTime;
 
-            Maze.Walls walls = Maze[quantized.x, quantized.y];
+            var walls = GetMovementWalls(quantized);
             var nextDirection = directionQueue.Count > 0 ? directionQueue.Peek() : -1;
             bool canExecuteNext = nextDirection != -1 && !walls[nextDirection];
 
@@ -185,8 +213,7 @@ namespace Labyrinth2D
                     }
                     else if (nextDirection == direction)
                     {
-                        velocity = Vector2.zero;
-                        directionQueue.Clear();
+                        Stop();
                         return;
                     }
                     else if (!CanExecuteNextSoon())
@@ -194,8 +221,7 @@ namespace Labyrinth2D
                         // If we can still make the maneuver now by backtracking (e.g. we just missed it), do that. Otherwise stop and bail.
                         if (!PrimeMovement(nextDirection))
                         {
-                            velocity = Vector2.zero;
-                            directionQueue.Clear();
+                            Stop();
                             return;
                         }
                     }
@@ -218,6 +244,20 @@ namespace Labyrinth2D
                     frameTime -= timeToCenter;
                     velocity = Vector2.zero;
                 }
+            }
+
+            if (quantized.x == Maze.Exit[0] && quantized.y == Maze.Exit[1])
+            {
+                if (!reachedExit)
+                {
+                    reachedExit = true;
+                    GameOverMenu.Instantiate(GetComponentInParent<Game>());
+                    Stop();
+                }
+            }
+            else
+            {
+                reachedExit = false;
             }
 
             if (directionQueue.Count > 0)

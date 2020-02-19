@@ -15,6 +15,11 @@ namespace Labyrinth3D
             Cursor.lockState = CursorLockMode.Locked;
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            GameOverMenu.Instantiate(GetComponentInParent<Game>());
+        }
+
         private void Update()
         {
             scroll += ScrollMultiplier * Input.mouseScrollDelta;

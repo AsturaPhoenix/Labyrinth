@@ -3,6 +3,15 @@ using UnityEngine.SceneManagement;
 
 public class GameOverMenu : MonoBehaviour
 {
+    public static GameObject Instantiate(GameObject parent)
+    {
+        var instance = Instantiate(Resources.Load<GameObject>("Game Over Menu"), parent.transform);
+        instance.GetComponent<GameOverMenu>().Parent = parent;
+        return instance;
+    }
+
+    public static GameObject Instantiate(Game game) => Instantiate((game as MonoBehaviour).gameObject);
+
     public GameObject Parent;
 
     public Game Game => Parent.GetComponent<Game>();
