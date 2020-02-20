@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Labyrinth3D
@@ -7,7 +6,7 @@ namespace Labyrinth3D
     public class Render : MonoBehaviour, Game
     {
         public int Width, Height, Depth;
-        public GameObject Wall, Edge, Corner, Player, Entrance, Exit;
+        public GameObject Wall, Edge, Corner, Player, Entrance, Exit, SettingsMenu;
 
         private Maze maze;
         private GameObject mazeElements;
@@ -41,7 +40,12 @@ namespace Labyrinth3D
             Start();
         }
 
-        public void Settings() { }
+        public GameObject Settings()
+        {
+            var settings = Instantiate(SettingsMenu);
+            settings.GetComponent<Settings>().Maze = this;
+            return settings;
+        }
 
         public void Export() { }
 

@@ -17,7 +17,7 @@ namespace Labyrinth3D
 
         private void OnTriggerEnter(Collider other)
         {
-            GameOverMenu.Instantiate(GetComponentInParent<Game>());
+            GetComponentInParent<GameMenuLauncher>().Show();
         }
 
         private void Update()

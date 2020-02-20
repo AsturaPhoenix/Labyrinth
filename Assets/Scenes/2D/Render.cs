@@ -19,7 +19,7 @@ namespace Labyrinth2D
             Regenerate();
         }
 
-        public void Settings() { }
+        public GameObject Settings() => null;
 
         public void Export() { }
 

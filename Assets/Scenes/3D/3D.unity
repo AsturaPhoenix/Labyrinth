@@ -168,6 +168,8 @@ MonoBehaviour:
   Player: {fileID: 2029623705}
   Entrance: {fileID: 969843763}
   Exit: {fileID: 1642709903}
+  SettingsMenu: {fileID: 806937603222330894, guid: 21b11d3f9db51374a8b1f03f77a9a7c0,
+    type: 3}
 --- !u!114 &6243615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,6 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d3c53eb58b0cc448d04cea9841563a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Menu: {fileID: 3358862949179287740, guid: 3de62ad4bcae5d34e90a97473c53fbb1, type: 3}
 --- !u!1 &174730527
 GameObject:
   m_ObjectHideFlags: 0

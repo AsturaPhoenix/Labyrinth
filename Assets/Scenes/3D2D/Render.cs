@@ -5,6 +5,7 @@ namespace Labyrinth3D2D
 {
     public class Render : MonoBehaviour, Game
     {
+        // TODO: actual mesh generation
         private const float Z_PEACEMAKER = .99995f;
 
         public int Width, Height;
@@ -26,7 +27,7 @@ namespace Labyrinth3D2D
             Start();
         }
 
-        public void Settings() { }
+        public GameObject Settings() => null;
 
         public void Export() { }
 

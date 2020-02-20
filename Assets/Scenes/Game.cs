@@ -1,7 +1,9 @@
-﻿public interface Game
+﻿using UnityEngine;
+
+public interface Game
 {
     void NewMaze();
-    void Settings();
+    GameObject Settings();
     void Export();
     bool Import();
 }

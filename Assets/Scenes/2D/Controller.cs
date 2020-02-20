@@ -251,7 +251,7 @@ namespace Labyrinth2D
                 if (!reachedExit)
                 {
                     reachedExit = true;
-                    GameOverMenu.Instantiate(GetComponentInParent<Game>());
+                    GetComponentInParent<GameMenuLauncher>().Show();
                     Stop();
                 }
             }
