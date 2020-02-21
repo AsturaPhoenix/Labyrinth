@@ -200,6 +200,8 @@ MonoBehaviour:
   Player: {fileID: 1641268617}
   Entrance: {fileID: 900006903}
   Exit: {fileID: 1682271976}
+  SettingsMenu: {fileID: 806937603222330894, guid: e2d8fcc057829f541824c89cc91ac0c2,
+    type: 3}
 --- !u!114 &269996181
 MonoBehaviour:
   m_ObjectHideFlags: 0

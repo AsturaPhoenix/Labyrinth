@@ -10,7 +10,7 @@ namespace Labyrinth3D2D
 
         public int Width, Height;
         public float WallHeight, WallThickness;
-        public GameObject Ground, Wall, Player, Entrance, Exit;
+        public GameObject Ground, Wall, Player, Entrance, Exit, SettingsMenu;
 
         private Maze maze;
         private GameObject mazeElements;
@@ -26,8 +26,13 @@ namespace Labyrinth3D2D
             Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
             Start();
         }
-
-        public GameObject Settings() => null;
+        
+        public GameObject Settings()
+        {
+            var settings = Instantiate(SettingsMenu);
+            settings.GetComponent<Settings>().Maze = this;
+            return settings;
+        }
 
         public void Export() { }
 

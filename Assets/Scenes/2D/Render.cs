@@ -9,7 +9,7 @@ namespace Labyrinth2D
         public TileBase[] Tiles;
         public int Width, Height;
 
-        public GameObject Player;
+        public GameObject Player, SettingsMenu;
 
         private Tilemap tilemap;
 
@@ -18,8 +18,13 @@ namespace Labyrinth2D
             tilemap.ClearAllTiles();
             Regenerate();
         }
-
-        public GameObject Settings() => null;
+        
+        public GameObject Settings()
+        {
+            var settings = Instantiate(SettingsMenu);
+            settings.GetComponent<Settings>().Maze = this;
+            return settings;
+        }
 
         public void Export() { }
 
