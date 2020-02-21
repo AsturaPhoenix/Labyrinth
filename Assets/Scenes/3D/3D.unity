@@ -724,6 +724,7 @@ MonoBehaviour:
   LevelingConstant: 100
   LevelingAcceleration: 50
   ScrollMultiplier: 8
+  ScrollAheadTime: 0.5
 --- !u!135 &2029623710
 SphereCollider:
   m_ObjectHideFlags: 0

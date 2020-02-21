@@ -4,7 +4,7 @@ namespace Labyrinth3D
 {
     public class Controller : MonoBehaviour
     {
-        public float Acceleration, Speed, AngularAcceleration, LevelingConstant, LevelingAcceleration, ScrollMultiplier = 1;
+        public float Acceleration, Speed, AngularAcceleration, LevelingConstant, LevelingAcceleration, ScrollMultiplier = 1, ScrollAheadTime;
 
         private Rigidbody physics;
         private Vector2 scroll = new Vector2();
@@ -23,6 +23,9 @@ namespace Labyrinth3D
         private void Update()
         {
             scroll += ScrollMultiplier * Input.mouseScrollDelta;
+            float scrollAheadFrames = ScrollAheadTime / Time.fixedDeltaTime;
+            scroll.x = Mathf.Clamp(scroll.x, -scrollAheadFrames, scrollAheadFrames);
+            scroll.y = Mathf.Clamp(scroll.y, -scrollAheadFrames, scrollAheadFrames);
 
             physics.AddTorque(0, AngularAcceleration * Input2.GetAxis("Mouse X"), 0, ForceMode.Acceleration);
             physics.AddRelativeTorque(-AngularAcceleration * Input2.GetAxis("Mouse Y"), 0, 0, ForceMode.Acceleration);
