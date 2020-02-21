@@ -191,8 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b477ccf583b576043b36e591a2d9fc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 24
-  Height: 24
+  Dimensions: 1800000018000000
   WallHeight: 0.75
   WallThickness: 0.2
   Ground: {fileID: 50615093}
@@ -200,7 +199,7 @@ MonoBehaviour:
   Player: {fileID: 1641268617}
   Entrance: {fileID: 900006903}
   Exit: {fileID: 1682271976}
-  SettingsMenu: {fileID: 806937603222330894, guid: e2d8fcc057829f541824c89cc91ac0c2,
+  SettingsMenu: {fileID: 806937603222330894, guid: f96fd6510a2e80f4293e8c385b5fddcc,
     type: 3}
 --- !u!114 &269996181
 MonoBehaviour:

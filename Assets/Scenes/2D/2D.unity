@@ -38371,10 +38371,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2de0432aa14714f4f914e11781589db0, type: 2}
   - {fileID: 11400000, guid: 1e9c4726496ba3e4a8033c955c8e18e1, type: 2}
   - {fileID: 11400000, guid: 090e477d05b9756429b84f3a90424836, type: 2}
-  Width: 32
-  Height: 32
+  Dimensions: 2000000020000000
   Player: {fileID: 1972011523}
-  SettingsMenu: {fileID: 806937603222330894, guid: 0fa39a1b21eed3e49ab9175461420f0e,
+  SettingsMenu: {fileID: 806937603222330894, guid: f96fd6510a2e80f4293e8c385b5fddcc,
     type: 3}
 --- !u!114 &166229773
 MonoBehaviour:

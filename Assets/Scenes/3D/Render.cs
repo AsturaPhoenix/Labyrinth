@@ -5,7 +5,7 @@ namespace Labyrinth3D
 {
     public class Render : MonoBehaviour, Game
     {
-        public int Width, Height, Depth;
+        public int[] Dimensions;
         public GameObject Wall, Edge, Corner, Player, Entrance, Exit, SettingsMenu;
 
         private Maze maze;
@@ -33,6 +33,8 @@ namespace Labyrinth3D
             }
         }
 
+        int[] Game.Dimensions => Dimensions;
+
         public void NewMaze()
         {
             Destroy(mazeElements);
@@ -43,7 +45,7 @@ namespace Labyrinth3D
         public GameObject Settings()
         {
             var settings = Instantiate(SettingsMenu);
-            settings.GetComponent<Settings>().Maze = this;
+            settings.GetComponent<Settings>().Game = this;
             return settings;
         }
 
@@ -61,10 +63,10 @@ namespace Labyrinth3D
             mazeElements = new GameObject();
             mazeElements.transform.parent = transform;
 
-            maze = new Maze(Width, Height, Depth);
+            maze = new Maze(Dimensions);
 
             DisjointSetMazeGenerator.Generate(maze);
-            LongestPathEndpointGenerator.Generate(maze, Width / 2, Height / 2, 0);
+            LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, maze.Dimensions[1] / 2, 0);
 
             Entrance.transform.localPosition = CellSpace(maze.Entrance);
             Entrance.transform.localRotation = FaceMaze(maze.Entrance);
@@ -97,17 +99,17 @@ namespace Labyrinth3D
                             MazeElement(Wall).localPosition = WallSpace(x + .5f, y + .5f, z);
                         }
 
-                        if (x < Width)
+                        if (x < maze.Dimensions[0])
                         {
                             MazeElement(Edge).localPosition = WallSpace(x + .5f, y, z);
                         }
-                        if (y < Height)
+                        if (y < maze.Dimensions[1])
                         {
                             var transform = MazeElement(Edge);
                             transform.localPosition = WallSpace(x, y + .5f, z);
                             transform.localRotation = Quaternion.AngleAxis(90, Vector3.forward);
                         }
-                        if (z < Depth)
+                        if (z < maze.Dimensions[2])
                         {
                             var transform = MazeElement(Edge);
                             transform.localPosition = WallSpace(x, y, z + .5f);

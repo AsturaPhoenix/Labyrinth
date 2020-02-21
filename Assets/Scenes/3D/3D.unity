@@ -159,16 +159,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2252de328f2bdf64bb7d931bebacb05a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 6
-  Height: 6
-  Depth: 6
+  Dimensions: 060000000600000006000000
   Wall: {fileID: 6249625685770406024, guid: 71a3924fb49356544aaab7124c601374, type: 3}
   Edge: {fileID: 6764054552963674988, guid: 3cc2e243446e05443933f5e11bdbff85, type: 3}
   Corner: {fileID: 0}
   Player: {fileID: 2029623705}
   Entrance: {fileID: 969843763}
   Exit: {fileID: 1642709903}
-  SettingsMenu: {fileID: 806937603222330894, guid: 21b11d3f9db51374a8b1f03f77a9a7c0,
+  SettingsMenu: {fileID: 807081039750351720, guid: 427da3d84f637914a927dfd8ec7af94f,
     type: 3}
 --- !u!114 &6243615
 MonoBehaviour:

@@ -8,17 +8,19 @@ namespace Labyrinth3D2D
         // TODO: actual mesh generation
         private const float Z_PEACEMAKER = .99995f;
 
-        public int Width, Height;
+        public int[] Dimensions;
         public float WallHeight, WallThickness;
         public GameObject Ground, Wall, Player, Entrance, Exit, SettingsMenu;
 
         private Maze maze;
         private GameObject mazeElements;
 
-        private Vector3 WallSpace(float x, float y) => new Vector3(x - Width / 2.0f, 0, Height / 2.0f - y);
+        private Vector3 WallSpace(float x, float y) => new Vector3(x - maze.Dimensions[0] / 2.0f, 0, maze.Dimensions[1] / 2.0f - y);
         private Vector3 CellSpace(IList<int> coordinate) => WallSpace(coordinate[0] + .5f, coordinate[1] + .5f);
 
         private Quaternion FaceMaze(IList<int> coordinate) => Quaternion.AngleAxis(90 * maze.IngressDirection(coordinate) - 90, Vector3.up);
+
+        int[] Game.Dimensions => Dimensions;
 
         public void NewMaze()
         {
@@ -30,7 +32,7 @@ namespace Labyrinth3D2D
         public GameObject Settings()
         {
             var settings = Instantiate(SettingsMenu);
-            settings.GetComponent<Settings>().Maze = this;
+            settings.GetComponent<Settings>().Game = this;
             return settings;
         }
 
@@ -46,10 +48,10 @@ namespace Labyrinth3D2D
             mazeElements = new GameObject();
             mazeElements.transform.parent = transform;
 
-            maze = new Maze(Width, Height);
+            maze = new Maze(Dimensions);
 
             DisjointSetMazeGenerator.Generate(maze);
-            LongestPathEndpointGenerator.Generate(maze, Width / 2, 0);
+            LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, 0);
 
             Entrance.transform.localPosition = CellSpace(maze.Entrance);
             Entrance.transform.localRotation = FaceMaze(maze.Entrance);
@@ -59,13 +61,13 @@ namespace Labyrinth3D2D
             Player.transform.localPosition = Entrance.transform.localPosition;
             Player.transform.localRotation = Entrance.transform.localRotation;
 
-            Ground.transform.localScale = new Vector3(Width, 1, Height);
+            Ground.transform.localScale = new Vector3(maze.Dimensions[0], 1, maze.Dimensions[1]);
             var groundRenderer = Ground.GetComponentInChildren<Renderer>();
             foreach (var material in groundRenderer.materials)
             {
                 foreach (int id in material.GetTexturePropertyNameIDs())
                 {
-                    material.SetTextureScale(id, new Vector2(Width, Height));
+                    material.SetTextureScale(id, new Vector2(maze.Dimensions[0], maze.Dimensions[1]));
                 }
             }
 

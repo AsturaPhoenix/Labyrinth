@@ -7,11 +7,13 @@ namespace Labyrinth2D
     public class Render : MonoBehaviour, Game
     {
         public TileBase[] Tiles;
-        public int Width, Height;
+        public int[] Dimensions;
 
         public GameObject Player, SettingsMenu;
 
         private Tilemap tilemap;
+
+        int[] Game.Dimensions => Dimensions;
 
         public void NewMaze()
         {
@@ -22,7 +24,7 @@ namespace Labyrinth2D
         public GameObject Settings()
         {
             var settings = Instantiate(SettingsMenu);
-            settings.GetComponent<Settings>().Maze = this;
+            settings.GetComponent<Settings>().Game = this;
             return settings;
         }
 
@@ -35,10 +37,10 @@ namespace Labyrinth2D
 
         private void Regenerate()
         {
-            var maze = new Maze(Width, Height);
+            var maze = new Maze(Dimensions);
 
             DisjointSetMazeGenerator.Generate(maze);
-            LongestPathEndpointGenerator.Generate(maze, Width / 2, 0);
+            LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, 0);
 
             for (int y = 0; y <= maze.Dimensions[1]; ++y)
             {

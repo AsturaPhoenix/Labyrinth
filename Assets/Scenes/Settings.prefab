@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 806937603222330882}
-  - component: {fileID: 7144799867660832142}
+  - component: {fileID: 8016411418653522760}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Untagged
@@ -39,7 +39,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7144799867660832142
+--- !u!114 &8016411418653522760
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -48,13 +48,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 806937603222330894}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecee52869761d644fb7de83d54952e07, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b6053196e85f6f49821e354436ef543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: {fileID: 4949083435191919456}
-  Height: {fileID: 3326669696484318711}
+  Dimensions:
+  - {fileID: 4949083435191919456}
+  - {fileID: 3326669696484318711}
   Regenerate: {fileID: 8091194849927080355}
-  Maze: {fileID: 0}
 --- !u!1 &1571573855794942909
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,7 +261,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7144799867660832142}
+      - m_Target: {fileID: 8016411418653522760}
         m_MethodName: Validate
         m_Mode: 1
         m_Arguments:
@@ -405,7 +405,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7144799867660832142}
+      - m_Target: {fileID: 8016411418653522760}
         m_MethodName: OnBack
         m_Mode: 1
         m_Arguments:
@@ -545,7 +545,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7144799867660832142}
+      - m_Target: {fileID: 8016411418653522760}
         m_MethodName: Validate
         m_Mode: 1
         m_Arguments:
@@ -1141,7 +1141,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7144799867660832142}
+      - m_Target: {fileID: 8016411418653522760}
         m_MethodName: OnRegenerate
         m_Mode: 1
         m_Arguments:
