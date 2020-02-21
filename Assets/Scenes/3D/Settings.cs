@@ -6,20 +6,12 @@ namespace Labyrinth3D
     public class Settings : MonoBehaviour, Submenu
     {
         public InputField Width, Height, Depth;
+        public Button Regenerate;
 
         public MenuStack Menu;
         public Render Maze;
 
         MenuStack Submenu.Menu { set => Menu = value; }
-
-        public void ValidateDimension(InputField inputField)
-        {
-            if (inputField.text.Length > 0 && (inputField.text[0] == '-' || inputField.text[0] == '0'))
-            {
-                inputField.text = inputField.text.Substring(1);
-                inputField.caretPosition = 0;
-            }
-        }
 
         private void Start()
         {
@@ -28,7 +20,12 @@ namespace Labyrinth3D
             Depth.text = Maze.Depth.ToString();
         }
 
-        public void Regenerate()
+        public void Validate()
+        {
+            Regenerate.interactable = DimensionValidator.Validate(Width, Height, Depth);
+        }
+
+        public void OnRegenerate()
         {
             Menu.Destroy();
 
@@ -39,7 +36,7 @@ namespace Labyrinth3D
             Maze.NewMaze();
         }
 
-        public void Back()
+        public void OnBack()
         {
             Menu.Pop();
         }

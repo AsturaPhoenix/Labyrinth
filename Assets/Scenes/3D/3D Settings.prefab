@@ -54,6 +54,7 @@ MonoBehaviour:
   Width: {fileID: 4949083435191919456}
   Height: {fileID: 3326669696484318711}
   Depth: {fileID: 919711131476042785}
+  Regenerate: {fileID: 8091194849927080355}
   Maze: {fileID: 0}
 --- !u!1 &1571573855794942909
 GameObject:
@@ -221,6 +222,7 @@ GameObject:
   - component: {fileID: 5336968947145325013}
   - component: {fileID: 6340313799399186395}
   - component: {fileID: 3326669696484318711}
+  - component: {fileID: 5018265026290552709}
   m_Layer: 5
   m_Name: Height
   m_TagString: Untagged
@@ -338,11 +340,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3214749485832534038}
-        m_MethodName: ValidateDimension
-        m_Mode: 2
+        m_MethodName: Validate
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 3326669696484318711}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.InputField, UnityEngine.UI
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -355,6 +357,18 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+--- !u!114 &5018265026290552709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2492979790891462354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7261376bd56704aa4dd4cb6f9ced7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2574879433144125670
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,7 +484,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3214749485832534038}
-        m_MethodName: Back
+        m_MethodName: OnBack
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -492,6 +506,7 @@ GameObject:
   - component: {fileID: 6441287448851630260}
   - component: {fileID: 904585734232851489}
   - component: {fileID: 4949083435191919456}
+  - component: {fileID: 1130131238778216299}
   m_Layer: 5
   m_Name: Width
   m_TagString: Untagged
@@ -609,11 +624,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3214749485832534038}
-        m_MethodName: ValidateDimension
-        m_Mode: 2
+        m_MethodName: Validate
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 4949083435191919456}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.InputField, UnityEngine.UI
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -626,6 +641,18 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+--- !u!114 &1130131238778216299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3798864500741193203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7261376bd56704aa4dd4cb6f9ced7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4026236635724248270
 GameObject:
   m_ObjectHideFlags: 0
@@ -1092,6 +1119,7 @@ GameObject:
   - component: {fileID: 8057807503424601952}
   - component: {fileID: 2091812303305363705}
   - component: {fileID: 919711131476042785}
+  - component: {fileID: 92705046449265679}
   m_Layer: 5
   m_Name: Depth
   m_TagString: Untagged
@@ -1209,11 +1237,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3214749485832534038}
-        m_MethodName: ValidateDimension
-        m_Mode: 2
+        m_MethodName: Validate
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 919711131476042785}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.InputField, UnityEngine.UI
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1226,6 +1254,18 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+--- !u!114 &92705046449265679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6085532687965478101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd7261376bd56704aa4dd4cb6f9ced7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6328099025731378846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1495,7 +1535,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3214749485832534038}
-        m_MethodName: Regenerate
+        m_MethodName: OnRegenerate
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
