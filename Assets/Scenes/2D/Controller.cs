@@ -8,9 +8,11 @@ namespace Labyrinth2D
     {
         public float Speed;
         public Maze Maze;
+        public int PlanAheadDistance = 5;
 
         private Vector2 velocity;
         private Queue<int> directionQueue = new Queue<int>();
+        private int tail;
         private bool reachedExit;
 
         public Vector2 Position
@@ -98,21 +100,25 @@ namespace Labyrinth2D
 
         public void EnqueueDirection(int direction)
         {
+            if (directionQueue.Count > 0 && direction == tail || directionQueue.Count == 0 && direction == Direction)
+                return;
+
             if (velocity == Vector2.zero && directionQueue.Count == 0)
                 PrimeMovement(direction);
 
             directionQueue.Enqueue(direction);
+            tail = direction;
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+            if (Input.GetAxis("X") < 0)
                 EnqueueDirection(0);
-            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            if (Input.GetAxis("X") > 0)
                 EnqueueDirection(2);
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetAxis("Z") > 0)
                 EnqueueDirection(1);
-            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetAxis("Z") < 0)
                 EnqueueDirection(3);
         }
 
@@ -148,8 +154,6 @@ namespace Labyrinth2D
             }
             return false;
         }
-
-        private const int PlanAheadDistance = 5;
 
         private bool CanExecuteNextSoon()
         {
@@ -210,11 +214,6 @@ namespace Labyrinth2D
                         Direction = direction = directionQueue.Dequeue();
                         nextDirection = directionQueue.Count > 0 ? directionQueue.Peek() : -1;
                         canExecuteNext = nextDirection != -1 && !walls[nextDirection];
-                    }
-                    else if (nextDirection == direction)
-                    {
-                        Stop();
-                        return;
                     }
                     else if (!CanExecuteNextSoon())
                     {

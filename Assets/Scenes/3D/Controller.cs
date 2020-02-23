@@ -4,7 +4,7 @@ namespace Labyrinth3D
 {
     public class Controller : MonoBehaviour
     {
-        public float Acceleration, Speed, AngularAcceleration, LevelingConstant, LevelingAcceleration, ScrollMultiplier = 1, ScrollAheadTime;
+        public float Acceleration, Speed, AngularAcceleration, AngularEquilibriumConstant, LevelingAcceleration, ScrollMultiplier = 1, ScrollAheadTime;
 
         private Rigidbody physics;
         private Vector2 scroll = new Vector2();
@@ -27,28 +27,24 @@ namespace Labyrinth3D
             scroll.x = Mathf.Clamp(scroll.x, -scrollAheadFrames, scrollAheadFrames);
             scroll.y = Mathf.Clamp(scroll.y, -scrollAheadFrames, scrollAheadFrames);
 
-            physics.AddTorque(0, AngularAcceleration * Input2.GetAxis("Mouse X"), 0, ForceMode.Acceleration);
-            physics.AddRelativeTorque(-AngularAcceleration * Input2.GetAxis("Mouse Y"), 0, 0, ForceMode.Acceleration);
+            physics.AddTorque(0, AngularAcceleration * Input2.GetAxis("Frame Yaw"), 0, ForceMode.Acceleration);
+            physics.AddRelativeTorque(AngularAcceleration * Input2.GetAxis("Frame Pitch"), 0, 0, ForceMode.Acceleration);
         }
+
+        private static float NormalizeDegreesAboutZero(float degrees) => (degrees % 360 + 360 + 180) % 360 - 180;
+        private float RotateTowards(float degreesRemaining, float angularAcceleration) =>
+            Mathf.Clamp(AngularEquilibriumConstant * NormalizeDegreesAboutZero(degreesRemaining) * Mathf.Deg2Rad, -angularAcceleration, angularAcceleration);
 
         private void FixedUpdate()
         {
-            Vector2 rotation = new Vector2();
+            physics.AddTorque(0, AngularAcceleration * Input.GetAxis("Yaw"), 0, ForceMode.Acceleration);
 
-            if (Input.GetKey(KeyCode.LeftArrow))
-                --rotation.y;
-            if (Input.GetKey(KeyCode.RightArrow))
-                ++rotation.y;
-            if (Input.GetKey(KeyCode.DownArrow))
-                --rotation.x;
-            if (Input.GetKey(KeyCode.UpArrow))
-                ++rotation.x;
-            
-            physics.AddTorque(0, AngularAcceleration * rotation.y, 0, ForceMode.Acceleration);
-
-            float dTheta = (180 - (180 + physics.rotation.eulerAngles.z) % 360) * Mathf.Deg2Rad;
-            physics.AddRelativeTorque(AngularAcceleration * rotation.x, 0,
-                Mathf.Clamp(LevelingConstant * dTheta, -LevelingAcceleration, LevelingAcceleration), ForceMode.Acceleration);
+            Vector3 euler = physics.rotation.eulerAngles;
+            float nex = Mathf.Clamp(NormalizeDegreesAboutZero(euler.x) / 90, -1, 1);
+            physics.AddRelativeTorque(
+                AngularAcceleration * Mathf.Clamp(Input.GetAxis("Pitch"), -1 - nex, 1 - nex),
+                0,
+                RotateTowards(-euler.z, LevelingAcceleration), ForceMode.Acceleration);
 
             Vector3 direction = new Vector3();
 
@@ -62,7 +58,7 @@ namespace Labyrinth3D
                 --direction.z;
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.R))
                 ++direction.y;
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.F)) 
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.F))
                 --direction.y;
 
             if (scroll.x >= 1)

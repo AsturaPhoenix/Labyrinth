@@ -721,7 +721,7 @@ MonoBehaviour:
   Acceleration: 25
   Speed: 2.5
   AngularAcceleration: 90
-  LevelingConstant: 100
+  AngularEquilibriumConstant: 100
   LevelingAcceleration: 50
   ScrollMultiplier: 8
   ScrollAheadTime: 0.5

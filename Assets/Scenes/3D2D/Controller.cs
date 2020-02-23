@@ -26,31 +26,19 @@ namespace Labyrinth3D2D
 
         private void Update()
         {
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(2)) && Grounded)
+            if (Input.GetAxis("Jump") > 0 && Grounded)
                 jump = true;
 
-            physics.AddRelativeTorque(0, Torque * Input2.GetAxis("Mouse X"), 0);
+            physics.AddRelativeTorque(0, Torque * Input2.GetAxis("Frame Yaw"), 0);
         }
 
         private void FixedUpdate()
         {
-            if (Input.GetKey(KeyCode.LeftArrow))
-                physics.AddRelativeTorque(0, -Torque, 0);
-            if (Input.GetKey(KeyCode.RightArrow))
-                physics.AddRelativeTorque(0, Torque, 0);
+            physics.AddRelativeTorque(0, Torque * Input.GetAxis("Yaw"), 0);
 
             if (Grounded)
             {
-                Vector3 direction = new Vector3();
-
-                if (Input.GetKey(KeyCode.A))
-                    --direction.x;
-                if (Input.GetKey(KeyCode.D))
-                    ++direction.x;
-                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || Input.GetMouseButton(0))
-                    ++direction.z;
-                if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || Input.GetMouseButton(1))
-                    --direction.z;
+                Vector3 direction = new Vector3(Input.GetAxis("X"), 0, Input.GetAxis("Z") + Input.GetAxis("Z (Pitch-Locked)"));
 
                 Vector3 acceleration = Acceleration * (physics.rotation * direction.normalized);
                 if ((physics.velocity + acceleration * Time.fixedDeltaTime).sqrMagnitude > Speed * Speed)
