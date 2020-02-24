@@ -9,7 +9,8 @@ namespace Labyrinth2D
         public TileBase[] Tiles;
         public int[] Dimensions;
 
-        public GameObject Player, SettingsMenu;
+        public Controller Controller;
+        public GameObject SettingsMenu;
 
         private Tilemap tilemap;
 
@@ -20,7 +21,7 @@ namespace Labyrinth2D
             tilemap.ClearAllTiles();
             Regenerate();
         }
-        
+
         public GameObject Settings()
         {
             var settings = Instantiate(SettingsMenu);
@@ -28,7 +29,8 @@ namespace Labyrinth2D
             return settings;
         }
 
-        public void Export() { }
+        public void Export() {
+        }
 
         public bool Import()
         {
@@ -46,14 +48,13 @@ namespace Labyrinth2D
             {
                 for (int x = 0; x <= maze.Dimensions[0]; ++x)
                 {
-                    RenderCell(x, y, maze);
+                    RenderCell(maze, x, y);
                 }
             }
-
-            var controller = Player.GetComponent<Controller>();
-            controller.Stop();
-            controller.Maze = maze;
-            controller.Position = new Vector2 { x = maze.Entrance[0], y = maze.Entrance[1] };
+            
+            Controller.Stop();
+            Controller.Maze = maze;
+            Controller.Position = new Vector2 { x = maze.Entrance[0], y = maze.Entrance[1] };
         }
 
         void Start()
@@ -62,21 +63,20 @@ namespace Labyrinth2D
             Regenerate();
         }
 
-        private void RenderCell(int x, int y, Maze maze)
-        {
-            Maze.Walls localWalls = maze[x, y];
-            bool prevLeft = maze[x, y - 1][0], prevTop = maze[x - 1, y][1];
+        public static int IntersectionType(Maze maze, int x, int y) =>
+            (maze[x, y][1] ? 1 : 0) |
+            (maze[x, y - 1][0] ? 2 : 0) |
+            (maze[x - 1, y][1] ? 4 : 0) |
+            (maze[x, y][0] ? 8 : 0);
 
-            int upperLeftWall = (localWalls[1] ? 1 : 0) |
-                (prevLeft ? 2 : 0) |
-                (prevTop ? 4 : 0) |
-                (localWalls[0] ? 8 : 0);
-            tilemap.SetTile(new Vector3Int(2 * x, -2 * y, 0), Tiles[upperLeftWall]);
+        private void RenderCell(Maze maze, int x, int y)
+        {
+            tilemap.SetTile(new Vector3Int(2 * x, -2 * y, 0), Tiles[IntersectionType(maze, x, y)]);
             if (x < maze.Dimensions[0])
-                tilemap.SetTile(new Vector3Int(2 * x + 1, -2 * y, 0), Tiles[localWalls[1] ? 5 : 0]);
+                tilemap.SetTile(new Vector3Int(2 * x + 1, -2 * y, 0), Tiles[maze[x, y][1] ? 5 : 0]);
             if (y < maze.Dimensions[1])
             {
-                tilemap.SetTile(new Vector3Int(2 * x, -2 * y - 1, 0), Tiles[localWalls[0] ? 10 : 0]);
+                tilemap.SetTile(new Vector3Int(2 * x, -2 * y - 1, 0), Tiles[maze[x, y][0] ? 10 : 0]);
                 if (x < maze.Dimensions[0])
                     tilemap.SetTile(new Vector3Int(2 * x + 1, -2 * y - 1, 0), Tiles[0]);
             }

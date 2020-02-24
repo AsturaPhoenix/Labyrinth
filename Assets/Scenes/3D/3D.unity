@@ -163,11 +163,11 @@ MonoBehaviour:
   Wall: {fileID: 6249625685770406024, guid: 71a3924fb49356544aaab7124c601374, type: 3}
   Edge: {fileID: 6764054552963674988, guid: 3cc2e243446e05443933f5e11bdbff85, type: 3}
   Corner: {fileID: 0}
-  Player: {fileID: 2029623705}
   Entrance: {fileID: 969843763}
   Exit: {fileID: 1642709903}
   SettingsMenu: {fileID: 807081039750351720, guid: 427da3d84f637914a927dfd8ec7af94f,
     type: 3}
+  Player: {fileID: 2029623711}
 --- !u!114 &6243615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -747,7 +747,7 @@ Rigidbody:
   m_GameObject: {fileID: 2029623705}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 15
+  m_Drag: 12
   m_AngularDrag: 15
   m_UseGravity: 0
   m_IsKinematic: 0

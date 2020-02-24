@@ -7,6 +7,10 @@ namespace Tests
         [Test]
         public void SpiralMaze()
         {
+            // ┌─────┐ 
+            // ├───┐ │ 
+            // │ ╶─┘ │ 
+            // └─────┘
             var maze = new Maze(3, 3);
             maze[0, 0][2] = false;
             maze[1, 0][2] = false;
@@ -27,6 +31,8 @@ namespace Tests
             var maze = new Maze(10, 10);
             DisjointSetMazeGenerator.Generate(maze);
             LongestPathEndpointGenerator.Generate(maze, 0, 0);
+            Assert.NotNull(maze.Entrance);
+            Assert.NotNull(maze.Exit);
         }
     }
 }

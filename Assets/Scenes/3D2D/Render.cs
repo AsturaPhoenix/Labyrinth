@@ -10,7 +10,8 @@ namespace Labyrinth3D2D
 
         public int[] Dimensions;
         public float WallHeight, WallThickness;
-        public GameObject Ground, Wall, Player, Entrance, Exit, SettingsMenu;
+        public GameObject Ground, Wall, Entrance, Exit, SettingsMenu;
+        public Rigidbody Player;
 
         private Maze maze;
         private GameObject mazeElements;
@@ -25,7 +26,7 @@ namespace Labyrinth3D2D
         public void NewMaze()
         {
             Destroy(mazeElements);
-            Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            Player.velocity = Vector3.zero;
             Start();
         }
         
@@ -62,8 +63,7 @@ namespace Labyrinth3D2D
             Player.transform.localRotation = Entrance.transform.localRotation;
 
             Ground.transform.localScale = new Vector3(maze.Dimensions[0], 1, maze.Dimensions[1]);
-            var groundRenderer = Ground.GetComponentInChildren<Renderer>();
-            foreach (var material in groundRenderer.materials)
+            foreach (var material in Ground.GetComponentInChildren<Renderer>().materials)
             {
                 foreach (int id in material.GetTexturePropertyNameIDs())
                 {

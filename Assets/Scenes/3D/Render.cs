@@ -6,7 +6,8 @@ namespace Labyrinth3D
     public class Render : MonoBehaviour, Game
     {
         public int[] Dimensions;
-        public GameObject Wall, Edge, Corner, Player, Entrance, Exit, SettingsMenu;
+        public GameObject Wall, Edge, Corner, Entrance, Exit, SettingsMenu;
+        public Rigidbody Player;
 
         private Maze maze;
         private GameObject mazeElements;
@@ -38,7 +39,7 @@ namespace Labyrinth3D
         public void NewMaze()
         {
             Destroy(mazeElements);
-            Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            Player.velocity = Vector3.zero;
             Start();
         }
 

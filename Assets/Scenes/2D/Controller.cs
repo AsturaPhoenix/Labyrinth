@@ -245,7 +245,7 @@ namespace Labyrinth2D
                 }
             }
 
-            if (quantized.x == Maze.Exit[0] && quantized.y == Maze.Exit[1])
+            if (Maze.Exit != null && quantized.x == Maze.Exit[0] && quantized.y == Maze.Exit[1])
             {
                 if (!reachedExit)
                 {
