@@ -5,6 +5,6 @@ public interface Game
     int[] Dimensions { get; }
     void NewMaze();
     GameObject Settings();
-    void Export();
+    string Export();
     bool Import();
 }

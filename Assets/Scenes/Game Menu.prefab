@@ -847,6 +847,8 @@ MonoBehaviour:
   GameRoot: {fileID: 0}
   Carousel: {fileID: 8898325448044179309}
   RootMenu: {fileID: 6844061306726421051}
+  ExportMenu: {fileID: 806937603222330894, guid: c8b6258295babf84890b900b2e281de4,
+    type: 3}
 --- !u!1 &5064583005214724793
 GameObject:
   m_ObjectHideFlags: 0

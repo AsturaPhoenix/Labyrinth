@@ -37,7 +37,7 @@ namespace Labyrinth3D2D
             return settings;
         }
 
-        public void Export() { }
+        public string Export() => MazeSerializer.BoxDrawing.Serialize2D(maze);
 
         public bool Import()
         {

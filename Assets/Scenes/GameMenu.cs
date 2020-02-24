@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class GameMenu : MonoBehaviour, MenuStack
 {
-    public GameObject GameRoot, Carousel, RootMenu;
+    public GameObject GameRoot, Carousel, RootMenu, ExportMenu;
 
     public Game Game => GameRoot.GetComponent<Game>();
 
@@ -23,7 +23,12 @@ public class GameMenu : MonoBehaviour, MenuStack
         Shift(Game.Settings());
     }
 
-    public void Export() => Game.Export();
+    public void Export()
+    {
+        var menuInstance = Instantiate(ExportMenu);
+        menuInstance.GetComponent<Export>().Serialized.text = Game.Export();
+        Shift(menuInstance);
+    }
 
     public void Import()
     {

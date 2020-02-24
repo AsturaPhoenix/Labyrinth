@@ -50,7 +50,7 @@ namespace Labyrinth3D
             return settings;
         }
 
-        public void Export() { }
+        public string Export() => null;
 
         public bool Import()
         {

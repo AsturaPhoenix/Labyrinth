@@ -13,6 +13,7 @@ namespace Labyrinth2D
         public GameObject SettingsMenu;
 
         private Tilemap tilemap;
+        private Maze maze;
 
         int[] Game.Dimensions => Dimensions;
 
@@ -29,8 +30,7 @@ namespace Labyrinth2D
             return settings;
         }
 
-        public void Export() {
-        }
+        public string Export() => MazeSerializer.BoxDrawing.Serialize2D(maze);
 
         public bool Import()
         {
@@ -39,7 +39,7 @@ namespace Labyrinth2D
 
         private void Regenerate()
         {
-            var maze = new Maze(Dimensions);
+            maze = new Maze(Dimensions);
 
             DisjointSetMazeGenerator.Generate(maze);
             LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, 0);
@@ -48,7 +48,7 @@ namespace Labyrinth2D
             {
                 for (int x = 0; x <= maze.Dimensions[0]; ++x)
                 {
-                    RenderCell(maze, x, y);
+                    RenderCell(x, y);
                 }
             }
             
@@ -69,7 +69,7 @@ namespace Labyrinth2D
             (maze[x - 1, y][1] ? 4 : 0) |
             (maze[x, y][0] ? 8 : 0);
 
-        private void RenderCell(Maze maze, int x, int y)
+        private void RenderCell(int x, int y)
         {
             tilemap.SetTile(new Vector3Int(2 * x, -2 * y, 0), Tiles[IntersectionType(maze, x, y)]);
             if (x < maze.Dimensions[0])
