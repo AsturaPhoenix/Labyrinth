@@ -26,6 +26,7 @@ public class GameMenu : MonoBehaviour, MenuStack
     public void Export()
     {
         var menuInstance = Instantiate(ExportMenu);
+        // TODO: If the character count exceeds 16k or so, we'll run into a mesh vertex limit.
         menuInstance.GetComponent<Export>().Serialized.text = Game.Export();
         Shift(menuInstance);
     }
