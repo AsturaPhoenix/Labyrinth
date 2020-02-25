@@ -50,7 +50,7 @@ namespace Labyrinth3D
             return settings;
         }
 
-        public string Export() => null;
+        public string Export() => MazeSerializer.BoxDrawing.Serialize3D(maze);
 
         public bool Import()
         {
