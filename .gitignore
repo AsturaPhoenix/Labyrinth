@@ -6,6 +6,7 @@
 /[Tt]emp/
 /[Oo]bj/
 /[Ll]ogs/
+/Mazes/
 /WebGL/
 
 # MemoryCaptures can get excessive in size.
