@@ -7,8 +7,8 @@ namespace Tests
         [Test]
         public void Box2DSingleCell()
         {
-            Assert.AreEqual("┌─┐ \n" +
-                            "└─┘ \n", MazeSerializer.BoxDrawing.Serialize2D(new Maze(1, 1)));
+            Assert.AreEqual("┌─┐\n" +
+                            "└─┘", MazeSerializer.BoxDrawing.Serialize2D(new Maze(1, 1)));
         }
 
         [Test]
@@ -24,10 +24,19 @@ namespace Tests
             maze[0, 2][1] = false;
             maze[0, 1][2] = false;
 
-            Assert.AreEqual("┌─────┐ \n" +
-                            "├───┐ │ \n" +
-                            "│ ╶─┘ │ \n" +
-                            "└─────┘ \n", MazeSerializer.BoxDrawing.Serialize2D(maze));
+            Assert.AreEqual("┌─────┐\n" +
+                            "├───┐ │\n" +
+                            "│ ╶─┘ │\n" +
+                            "└─────┘", MazeSerializer.BoxDrawing.Serialize2D(maze));
+        }
+
+        [Test]
+        public void Box2DRandom()
+        {
+            var maze = new Maze(20, 10);
+            DisjointSetMazeGenerator.Generate(maze);
+            LongestPathEndpointGenerator.Generate(maze, 0, 0);
+            Assert.AreEqual(maze, MazeSerializer.BoxDrawing.Deserialize2D(MazeSerializer.BoxDrawing.Serialize2D(maze)));
         }
     }
 }

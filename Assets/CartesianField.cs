@@ -92,4 +92,10 @@ public class CartesianField<T> : IEnumerable<T>
     public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)cells).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => cells.GetEnumerator();
+
+    public bool Equals(CartesianField<T> other) => other != null && Dimensions == other.Dimensions && StructuralComparisons.StructuralEqualityComparer.Equals(cells, other.cells);
+    public override bool Equals(object obj) => Equals(obj as CartesianField<T>);
+    public override int GetHashCode() => Dimensions.GetHashCode() ^ StructuralComparisons.StructuralEqualityComparer.GetHashCode(cells);
+    public static bool operator ==(CartesianField<T> a, CartesianField<T> b) => Equals(a, b);
+    public static bool operator !=(CartesianField<T> a, CartesianField<T> b) => !(a == b);
 }

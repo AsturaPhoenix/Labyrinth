@@ -50,10 +50,10 @@ public class MutableVector<T> : IList<T>
 
     IEnumerator IEnumerable.GetEnumerator() => array.GetEnumerator();
 
-    public override bool Equals(object other) => (other is MutableVector<T> || other is ImmutableVector<T>) && Enumerable.SequenceEqual(this, (IList<T>)other);
+    public override bool Equals(object other) => (other is MutableVector<T> || other is ImmutableVector<T>) && this.SequenceEqual((IList<T>)other);
 
     public override int GetHashCode() => StructuralComparisons.StructuralEqualityComparer.GetHashCode(array);
 
-    public static bool operator ==(MutableVector<T> a, object b) => object.Equals(a, b);
+    public static bool operator ==(MutableVector<T> a, object b) => Equals(a, b);
     public static bool operator !=(MutableVector<T> a, object b) => !(a == b);
 }

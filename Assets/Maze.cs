@@ -100,7 +100,26 @@ public class Maze
             if (coordinate[i] < 0) return i + Dimensions.Dimensionality;
             if (coordinate[i] >= Dimensions[i]) return i;
         }
-        
+
         throw new ArgumentException("Coordinate is not outside maze.");
+    }
+
+    public bool Equals(Maze other) => other != null && Entrance == other.Entrance && Exit == other.Exit && cells == other.cells;
+    public override bool Equals(object obj) => Equals(obj as Maze);
+    public override int GetHashCode() => throw new NotImplementedException();
+    public static bool operator ==(Maze a, Maze b) => Equals(a, b);
+    public static bool operator !=(Maze a, Maze b) => !(a == b);
+
+    public override string ToString()
+    {
+        switch (Dimensions.Dimensionality)
+        {
+            case 2:
+                return MazeSerializer.BoxDrawing.Serialize2D(this);
+            case 3:
+                return MazeSerializer.BoxDrawing.Serialize3D(this);
+            default:
+                return Dimensions.ToString();
+        }
     }
 }
