@@ -7,7 +7,7 @@ public static class MazeSerializer
 {
     public static class BoxDrawing
     {
-        private const string corners = " ╶╵└╴─┘┴╷┌│├┐┬┤┼", floors = "↑↓↕";
+        private const string corners = " ╶╵└╴─┘┴╷┌│├┐┬┤┼", floors = "↑↓↕", reverseEndpoints = "exit < entrance";
 
         private static bool EndpointsReversed(Maze maze)
         {
@@ -40,7 +40,7 @@ public static class MazeSerializer
             }
 
             if (EndpointsReversed(maze))
-                sb.Append("\nexit > entrance");
+                sb.Append('\n').Append(reverseEndpoints);
 
             return sb.ToString();
         }
@@ -60,7 +60,7 @@ public static class MazeSerializer
                 }
 
                 bool reverseEndpoints = false;
-                if (lines[lines.Count - 1] == "exit > entrance")
+                if (lines[lines.Count - 1] == BoxDrawing.reverseEndpoints)
                 {
                     reverseEndpoints = true;
                     lines.RemoveAt(lines.Count - 1);
@@ -167,7 +167,7 @@ public static class MazeSerializer
             }
 
             if (EndpointsReversed(maze))
-                sb.Append("\nexit > entrance");
+                sb.Append('\n').Append(reverseEndpoints);
 
             return sb.ToString();
         }
