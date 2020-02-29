@@ -48,6 +48,8 @@ public class ImmutableVector<T> : IList<T>
 
     IEnumerator IEnumerable.GetEnumerator() => array.GetEnumerator();
 
+    public override string ToString() => "[" + string.Join(", ", array) + "]";
+
     public override bool Equals(object other) => (other is MutableVector<T> || other is ImmutableVector<T>) && this.SequenceEqual((IList<T>)other);
 
     public override int GetHashCode() => StructuralComparisons.StructuralEqualityComparer.GetHashCode(array);

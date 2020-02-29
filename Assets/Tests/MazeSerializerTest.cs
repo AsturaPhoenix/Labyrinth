@@ -38,5 +38,14 @@ namespace Tests
             LongestPathEndpointGenerator.Generate(maze, 0, 0);
             Assert.AreEqual(maze, MazeSerializer.BoxDrawing.Deserialize2D(MazeSerializer.BoxDrawing.Serialize2D(maze)));
         }
+
+        [Test]
+        public void Box3DRandom()
+        {
+            var maze = new Maze(5, 6, 7);
+            DisjointSetMazeGenerator.Generate(maze);
+            LongestPathEndpointGenerator.Generate(maze, 0, 0, 0);
+            Assert.AreEqual(maze, MazeSerializer.BoxDrawing.Deserialize3D(MazeSerializer.BoxDrawing.Serialize3D(maze)));
+        }
     }
 }
