@@ -38,9 +38,12 @@ namespace Labyrinth3D
 
         public void NewMaze()
         {
-            Destroy(mazeElements);
-            Player.velocity = Vector3.zero;
-            Start();
+            maze = new Maze(Dimensions);
+
+            DisjointSetMazeGenerator.Generate(maze);
+            LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, maze.Dimensions[1] / 2, 0);
+
+            MazeUpdated();
         }
 
         public GameObject Settings()
@@ -52,22 +55,24 @@ namespace Labyrinth3D
 
         public string Export() => MazeSerializer.BoxDrawing.Serialize3D(maze);
 
-        public bool Import()
+        public bool Import(string serialized)
         {
-            return false;
+            var newMaze = MazeSerializer.BoxDrawing.Deserialize3D(serialized);
+            if (newMaze == null)
+                return false;
+
+            maze = newMaze;
+            MazeUpdated();
+            return true;
         }
 
-        private Transform MazeElement(GameObject template) => Instantiate(template, mazeElements.transform).transform;
-
-        void Start()
+        private void MazeUpdated()
         {
+            Destroy(mazeElements);
+            Player.velocity = Vector3.zero;
+
             mazeElements = new GameObject();
             mazeElements.transform.parent = transform;
-
-            maze = new Maze(Dimensions);
-
-            DisjointSetMazeGenerator.Generate(maze);
-            LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, maze.Dimensions[1] / 2, 0);
 
             Entrance.transform.localPosition = CellSpace(maze.Entrance);
             Entrance.transform.localRotation = FaceMaze(maze.Entrance);
@@ -125,5 +130,9 @@ namespace Labyrinth3D
                 }
             }
         }
+
+        private Transform MazeElement(GameObject template) => Instantiate(template, mazeElements.transform).transform;
+
+        private void Start() => NewMaze();
     }
 }

@@ -25,9 +25,12 @@ namespace Labyrinth3D2D
 
         public void NewMaze()
         {
-            Destroy(mazeElements);
-            Player.velocity = Vector3.zero;
-            Start();
+            maze = new Maze(Dimensions);
+
+            DisjointSetMazeGenerator.Generate(maze);
+            LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, 0);
+
+            MazeUpdated();
         }
         
         public GameObject Settings()
@@ -39,20 +42,23 @@ namespace Labyrinth3D2D
 
         public string Export() => MazeSerializer.BoxDrawing.Serialize2D(maze);
 
-        public bool Import()
+        public bool Import(string serialized)
         {
-            return false;
+            var newMaze = MazeSerializer.BoxDrawing.Deserialize2D(serialized);
+            if (newMaze == null)
+                return false;
+
+            maze = newMaze;
+            return true;
         }
 
-        void Start()
+        private void MazeUpdated()
         {
+            Destroy(mazeElements);
+            Player.velocity = Vector3.zero;
+
             mazeElements = new GameObject();
             mazeElements.transform.parent = transform;
-
-            maze = new Maze(Dimensions);
-
-            DisjointSetMazeGenerator.Generate(maze);
-            LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, 0);
 
             Entrance.transform.localPosition = CellSpace(maze.Entrance);
             Entrance.transform.localRotation = FaceMaze(maze.Entrance);
@@ -114,6 +120,8 @@ namespace Labyrinth3D2D
                 }
             }
         }
+
+        private void Start() => NewMaze();
 
         private Transform CreateWall(int length)
         {

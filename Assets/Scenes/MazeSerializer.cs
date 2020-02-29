@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -119,8 +120,9 @@ public static class MazeSerializer
 
                 return maze;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.Log(e);
                 return null;
             }
         }
@@ -292,7 +294,7 @@ public static class MazeSerializer
 
                 return maze;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Debug.Log(e);
                 return null;

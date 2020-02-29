@@ -32,9 +32,15 @@ namespace Labyrinth2D
 
         public string Export() => MazeSerializer.BoxDrawing.Serialize2D(maze);
 
-        public bool Import()
+        public bool Import(string serialized)
         {
-            return false;
+            var newMaze = MazeSerializer.BoxDrawing.Deserialize2D(serialized);
+            if (newMaze == null)
+                return false;
+
+            maze = newMaze;
+            MazeUpdated();
+            return true;
         }
 
         private void Regenerate()
@@ -44,6 +50,11 @@ namespace Labyrinth2D
             DisjointSetMazeGenerator.Generate(maze);
             LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, 0);
 
+            MazeUpdated();
+        }
+
+        private void MazeUpdated()
+        {
             for (int y = 0; y <= maze.Dimensions[1]; ++y)
             {
                 for (int x = 0; x <= maze.Dimensions[0]; ++x)
@@ -51,13 +62,13 @@ namespace Labyrinth2D
                     RenderCell(x, y);
                 }
             }
-            
+
             Controller.Stop();
             Controller.Maze = maze;
             Controller.Position = new Vector2 { x = maze.Entrance[0], y = maze.Entrance[1] };
         }
 
-        void Start()
+        private void Start()
         {
             tilemap = GetComponent<Tilemap>();
             Regenerate();

@@ -6,5 +6,5 @@ public interface Game
     void NewMaze();
     GameObject Settings();
     string Export();
-    bool Import();
+    bool Import(string serialized);
 }

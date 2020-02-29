@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class GameMenu : MonoBehaviour, MenuStack
 {
-    public GameObject GameRoot, Carousel, RootMenu, ExportMenu;
+    public GameObject GameRoot, Carousel, RootMenu, ExportMenu, ImportMenu;
 
     public Game Game => GameRoot.GetComponent<Game>();
 
@@ -33,8 +33,9 @@ public class GameMenu : MonoBehaviour, MenuStack
 
     public void Import()
     {
-        if (Game.Import())
-            Destroy();
+        var menuInstance = Instantiate(ImportMenu);
+        menuInstance.GetComponent<Import>().Game = Game;
+        Shift(menuInstance);
     }
 
     public void MainMenu() => SceneManager.LoadScene("Main Menu");
