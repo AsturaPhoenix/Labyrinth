@@ -82,14 +82,14 @@ namespace Labyrinth2D
 
         private void RenderCell(int x, int y)
         {
-            tilemap.SetTile(new Vector3Int(2 * x, -2 * y, 0), Tiles[IntersectionType(maze, x, y)]);
+            tilemap.SetTile(new Vector3Int(2 * x, 2 * y, 0), Tiles[IntersectionType(maze, x, y)]);
             if (x < maze.Dimensions[0])
-                tilemap.SetTile(new Vector3Int(2 * x + 1, -2 * y, 0), Tiles[maze[x, y][1] ? 5 : 0]);
+                tilemap.SetTile(new Vector3Int(2 * x + 1, 2 * y, 0), Tiles[maze[x, y][1] ? 5 : 0]);
             if (y < maze.Dimensions[1])
             {
-                tilemap.SetTile(new Vector3Int(2 * x, -2 * y - 1, 0), Tiles[maze[x, y][0] ? 10 : 0]);
+                tilemap.SetTile(new Vector3Int(2 * x, 2 * y + 1, 0), Tiles[maze[x, y][0] ? 10 : 0]);
                 if (x < maze.Dimensions[0])
-                    tilemap.SetTile(new Vector3Int(2 * x + 1, -2 * y - 1, 0), Tiles[0]);
+                    tilemap.SetTile(new Vector3Int(2 * x + 1, 2 * y + 1, 0), Tiles[0]);
             }
         }
     }

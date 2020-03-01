@@ -9,6 +9,7 @@ namespace Labyrinth2D
         public float Speed;
         public Maze Maze;
         public int PlanAheadDistance = 5;
+        public GameMenuLauncher Menu;
 
         private Vector2 velocity;
         private Queue<int> directionQueue = new Queue<int>();
@@ -17,11 +18,8 @@ namespace Labyrinth2D
 
         public Vector2 Position
         {
-            get => new Vector2((transform.localPosition.x - 1.5f) / 2, (-transform.localPosition.y - .5f) / 2);
-            set
-            {
-                transform.localPosition = new Vector3(1.5f + 2 * value.x, -.5f - 2 * value.y, 0);
-            }
+            get => new Vector2(transform.localPosition.x, transform.localPosition.y);
+            set => transform.localPosition = new Vector3(value.x, value.y, transform.localPosition.z);
         }
 
         public int Direction
@@ -110,15 +108,15 @@ namespace Labyrinth2D
             tail = direction;
         }
 
-        void Update()
+        private void Update()
         {
             if (Input.GetAxis("X") < 0)
                 EnqueueDirection(0);
             if (Input.GetAxis("X") > 0)
                 EnqueueDirection(2);
-            if (Input.GetAxis("Z") > 0)
-                EnqueueDirection(1);
             if (Input.GetAxis("Z") < 0)
+                EnqueueDirection(1);
+            if (Input.GetAxis("Z") > 0)
                 EnqueueDirection(3);
         }
 
@@ -250,7 +248,7 @@ namespace Labyrinth2D
                 if (!reachedExit)
                 {
                     reachedExit = true;
-                    GetComponentInParent<GameMenuLauncher>().Show();
+                    Menu.Show();
                     Stop();
                 }
             }
