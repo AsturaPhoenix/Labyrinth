@@ -9,11 +9,10 @@ namespace Labyrinth3D
         public GameObject Wall, Edge, Corner, Entrance, Exit, SettingsMenu;
         public Rigidbody Player;
 
-        private Maze maze;
+        private IMaze maze;
         private GameObject mazeElements;
-
-        private static Vector3 WallSpace(float x, float y, float z) => new Vector3(x, -y, z);
-        private static Vector3 CellSpace(IList<int> coordinate) => WallSpace(coordinate[0] + .5f, coordinate[1] + .5f, coordinate[2] + .5f);
+        
+        private static Vector3 CellSpace(IList<int> coordinate) => new Vector3(coordinate[0] + .5f, coordinate[1] + .5f, coordinate[2] + .5f);
 
         private Quaternion FaceMaze(IList<int> coordinate)
         {
@@ -22,13 +21,13 @@ namespace Labyrinth3D
                 case 0:
                     return Quaternion.AngleAxis(-90, Vector3.up);
                 case 1:
-                    return Quaternion.AngleAxis(-90, Vector3.right);
+                    return Quaternion.AngleAxis(90, Vector3.right);
                 case 2:
                     return Quaternion.AngleAxis(180, Vector3.up);
                 case 3:
                     return Quaternion.AngleAxis(90, Vector3.up);
                 case 4:
-                    return Quaternion.AngleAxis(90, Vector3.right);
+                    return Quaternion.AngleAxis(-90, Vector3.right);
                 default:
                     return Quaternion.identity;
             }
@@ -38,10 +37,10 @@ namespace Labyrinth3D
 
         public void NewMaze()
         {
-            maze = new Maze(Dimensions);
-
+            var maze = new Maze(Dimensions);
             DisjointSetMazeGenerator.Generate(maze);
             LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, maze.Dimensions[1] / 2, 0);
+            this.maze = maze;
 
             MazeUpdated();
         }
@@ -53,11 +52,11 @@ namespace Labyrinth3D
             return settings;
         }
 
-        public string Export() => MazeSerializer.BoxDrawing.Serialize3D(maze);
+        public string Export() => MazeSerializer.BoxDrawing.Serialize3D(maze.Swizzle(0, 1, 5));
 
         public bool Import(string serialized)
         {
-            var newMaze = MazeSerializer.BoxDrawing.Deserialize3D(serialized);
+            var newMaze = MazeSerializer.BoxDrawing.Deserialize3D(serialized).Swizzle(0, 1, 5);
             if (newMaze == null)
                 return false;
 
@@ -91,40 +90,40 @@ namespace Labyrinth3D
                         if (maze[x, y, z][0])
                         {
                             var transform = MazeElement(Wall);
-                            transform.localPosition = WallSpace(x, y + .5f, z + .5f);
+                            transform.localPosition = new Vector3(x, y + .5f, z + .5f);
                             transform.localRotation = Quaternion.AngleAxis(90, Vector3.up);
                         }
                         if (maze[x, y, z][1])
                         {
                             var transform = MazeElement(Wall);
-                            transform.localPosition = WallSpace(x + .5f, y, z + .5f);
+                            transform.localPosition = new Vector3(x + .5f, y, z + .5f);
                             transform.localRotation = Quaternion.AngleAxis(90, Vector3.right);
                         }
                         if (maze[x, y, z][2])
                         {
-                            MazeElement(Wall).localPosition = WallSpace(x + .5f, y + .5f, z);
+                            MazeElement(Wall).localPosition = new Vector3(x + .5f, y + .5f, z);
                         }
 
                         if (x < maze.Dimensions[0])
                         {
-                            MazeElement(Edge).localPosition = WallSpace(x + .5f, y, z);
+                            MazeElement(Edge).localPosition = new Vector3(x + .5f, y, z);
                         }
                         if (y < maze.Dimensions[1])
                         {
                             var transform = MazeElement(Edge);
-                            transform.localPosition = WallSpace(x, y + .5f, z);
+                            transform.localPosition = new Vector3(x, y + .5f, z);
                             transform.localRotation = Quaternion.AngleAxis(90, Vector3.forward);
                         }
                         if (z < maze.Dimensions[2])
                         {
                             var transform = MazeElement(Edge);
-                            transform.localPosition = WallSpace(x, y, z + .5f);
+                            transform.localPosition = new Vector3(x, y, z + .5f);
                             transform.localRotation = Quaternion.AngleAxis(-90, Vector3.up);
                         }
 
                         if (Corner != null)
                         {
-                            MazeElement(Corner).localPosition = WallSpace(x, y, z);
+                            MazeElement(Corner).localPosition = new Vector3(x, y, z);
                         }
                     }
                 }
