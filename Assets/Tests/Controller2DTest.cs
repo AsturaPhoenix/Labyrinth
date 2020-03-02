@@ -13,7 +13,7 @@ namespace Tests
             var maze = controller.Maze = new Maze(3, 2);
             controller.Speed = 1 / Time.fixedDeltaTime;
 
-            Maze.Walls walls = maze[1, 1];
+            IMazeWalls walls = maze[1, 1];
             walls[0] = false;
             walls[1] = false;
             walls[2] = false;

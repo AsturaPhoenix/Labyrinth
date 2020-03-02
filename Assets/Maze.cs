@@ -17,6 +17,25 @@ public interface IMazeWalls
     bool this[int side] { get; set; }
 }
 
+public static class MazeExtensions
+{
+    public static IMaze Swizzle(this IMaze maze, params int[] swizzle) => Swizzle(maze, new ImmutableVector<int>(swizzle));
+    public static IMaze Swizzle(this IMaze maze, ImmutableVector<int> swizzle) => new Maze.Swizzler(maze, swizzle);
+
+    public static int IngressDirection(this IMaze maze, IList<int> coordinate)
+    {
+        if (coordinate.Count != maze.Dimensions.Dimensionality) throw new ArgumentException("Dimensionality mismatch.");
+
+        for (int i = 0; i < maze.Dimensions.Dimensionality; ++i)
+        {
+            if (coordinate[i] < 0) return i + maze.Dimensions.Dimensionality;
+            if (coordinate[i] >= maze.Dimensions[i]) return i;
+        }
+
+        throw new ArgumentException("Coordinate is not outside maze.");
+    }
+}
+
 public class Maze : IMaze
 {
     public static MutableVector<int> GetNeighbor(IList<int> coordinate, int side)
@@ -108,21 +127,7 @@ public class Maze : IMaze
     IMazeWalls IMaze.this[IList<int> coordinate] => this[coordinate];
 
     public bool ContainsCoordinate(params int[] coordinate) => cells.ContainsCoordinate(coordinate);
-
     public bool ContainsCoordinate(IList<int> coordinate) => cells.ContainsCoordinate(coordinate);
-
-    public int IngressDirection(IList<int> coordinate)
-    {
-        if (coordinate.Count != Dimensions.Dimensionality) throw new ArgumentException("Dimensionality mismatch.");
-
-        for (int i = 0; i < Dimensions.Dimensionality; ++i)
-        {
-            if (coordinate[i] < 0) return i + Dimensions.Dimensionality;
-            if (coordinate[i] >= Dimensions[i]) return i;
-        }
-
-        throw new ArgumentException("Coordinate is not outside maze.");
-    }
 
     public bool Equals(Maze other) => other != null && Entrance == other.Entrance && Exit == other.Exit && cells == other.cells;
     public override bool Equals(object obj) => Equals(obj as Maze);

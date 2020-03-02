@@ -7,7 +7,7 @@ namespace Labyrinth2D
     public class Controller : MonoBehaviour
     {
         public float Speed;
-        public Maze Maze;
+        public IMaze Maze;
         public int PlanAheadDistance = 5;
         public GameMenuLauncher Menu;
 
@@ -66,7 +66,7 @@ namespace Labyrinth2D
 
         private struct RealWalls : MovementWalls
         {
-            public Maze.Walls walls;
+            public IMazeWalls walls;
             public bool this[int side] => walls[side];
         }
 
