@@ -1,7 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class Maze
+public interface IMaze
+{
+    ImmutableVector<int> Dimensions { get; }
+
+    IMazeWalls this[params int[] coordinate] { get; }
+    IMazeWalls this[IList<int> coordinate] { get; }
+
+    ImmutableVector<int> Entrance { get; }
+    ImmutableVector<int> Exit { get; }
+}
+
+public interface IMazeWalls
+{
+    bool this[int side] { get; set; }
+}
+
+public class Maze : IMaze
 {
     public static MutableVector<int> GetNeighbor(IList<int> coordinate, int side)
     {
@@ -17,11 +33,11 @@ public class Maze
         return neighbor;
     }
 
-    public class Walls
+    public class Walls : IMazeWalls
     {
-        private Maze maze;
-        private ImmutableVector<int> coordinate;
-        private bool contained;
+        private readonly Maze maze;
+        private readonly ImmutableVector<int> coordinate;
+        private readonly bool contained;
 
         public Walls(Maze maze, ImmutableVector<int> coordinate)
         {
@@ -67,6 +83,8 @@ public class Maze
     private readonly CartesianField<bool[]> cells;
 
     public ImmutableVector<int> Entrance, Exit;
+    ImmutableVector<int> IMaze.Entrance => Entrance;
+    ImmutableVector<int> IMaze.Exit => Exit;
 
     public Maze(params int[] dimensions)
     {
@@ -82,10 +100,12 @@ public class Maze
     public int Volume => cells.Volume;
 
     public ImmutableVector<int> Dimensions => cells.Dimensions;
+    ImmutableVector<int> IMaze.Dimensions => Dimensions;
 
     public Walls this[params int[] coordinate] => this[(IList<int>)coordinate];
-
     public Walls this[IList<int> coordinate] => new Walls(this, new ImmutableVector<int>(coordinate));
+    IMazeWalls IMaze.this[params int[] coordinate] => this[coordinate];
+    IMazeWalls IMaze.this[IList<int> coordinate] => this[coordinate];
 
     public bool ContainsCoordinate(params int[] coordinate) => cells.ContainsCoordinate(coordinate);
 
@@ -121,5 +141,73 @@ public class Maze
             default:
                 return Dimensions.ToString();
         }
+    }
+
+    public class Swizzler : IMaze
+    {
+        public class Walls : IMazeWalls
+        {
+            private readonly IMazeWalls backing;
+            private readonly ImmutableVector<int> swizzle;
+
+            public Walls(IMazeWalls backing, ImmutableVector<int> swizzle)
+            {
+                this.backing = backing;
+                this.swizzle = swizzle;
+            }
+
+            private int Swizzle(int direction)
+            {
+                var swz = swizzle[direction % swizzle.Dimensionality];
+                return direction < swizzle.Dimensionality ? swz : (swizzle.Dimensionality + swz) % (2 * swizzle.Dimensionality);
+            }
+
+            public bool this[int side]
+            {
+                get => backing[Swizzle(side)];
+                set => backing[Swizzle(side)] = value;
+            }
+        }
+
+        private readonly IMaze maze;
+        private readonly ImmutableVector<int> swizzle;
+
+        /// <param name="swizzle">Swizzle is specified like a direction. Elements less than the
+        /// dimensionality map the specified incoming dimension to the outgoing dimension at that
+        /// position. Otherwise the dimension is flipped.</param>
+        public Swizzler(IMaze maze, ImmutableVector<int> swizzle)
+        {
+            this.maze = maze;
+            this.swizzle = swizzle;
+        }
+
+        private int[] Swizzle(IList<int> coordinate)
+        {
+            var swizzled = new int[coordinate.Count];
+            for (int i = 0; i < coordinate.Count; ++i)
+            {
+                int sourceDim = swizzle[i];
+                if (sourceDim < swizzle.Dimensionality)
+                {
+                    swizzled[i] = coordinate[sourceDim];
+                }
+                else
+                {
+                    sourceDim -= swizzle.Dimensionality;
+                    swizzled[i] = maze.Dimensions[sourceDim] - 1 - coordinate[sourceDim];
+                }
+            }
+            return swizzled;
+        }
+
+        public ImmutableVector<int> Dimensions => maze.Dimensions;
+
+        public Walls this[params int[] coordinate] => this[(IList<int>)coordinate];
+        public Walls this[IList<int> coordinate] => new Walls(maze[Swizzle(coordinate)], swizzle);
+        IMazeWalls IMaze.this[params int[] coordinate] => this[coordinate];
+        IMazeWalls IMaze.this[IList<int> coordinate] => this[coordinate];
+
+        public ImmutableVector<int> Entrance => new ImmutableVector<int>(Swizzle(maze.Entrance));
+        public ImmutableVector<int> Exit => new ImmutableVector<int>(Swizzle(maze.Exit));
     }
 }

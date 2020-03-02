@@ -8,11 +8,11 @@ public static class MazeSerializer
 {
     public static class BoxDrawing
     {
-        private const string corners = " ╶╵└╴─┘┴╷┌│├┐┬┤┼", floors = "↑↓↕", reverseEndpoints = "exit < entrance";
+        private const string corners = " ╶╵└╴─┘┴╷┌│├┐┬┤┼", floors = "↓↑↕", reverseEndpoints = "exit < entrance";
         private static int DecodeCorner(char corner) => corners.IndexOf(corner);
         private static int DecodeFloor(char floor) => floors.IndexOf(floor) + 1;
 
-        private static bool EndpointsReversed(Maze maze)
+        private static bool EndpointsReversed(IMaze maze)
         {
             if (maze.Entrance == null || maze.Exit == null) return false;
 
@@ -24,10 +24,10 @@ public static class MazeSerializer
             return false;
         }
 
-        public static string Serialize2D(Maze maze)
+        public static string Serialize2D(IMaze maze)
         {
             Debug.Assert(maze.Dimensions.Dimensionality == 2);
-
+            
             var sb = new StringBuilder();
 
             for (int y = 0; y <= maze.Dimensions[1]; ++y)
@@ -127,41 +127,41 @@ public static class MazeSerializer
             }
         }
 
-        public static string Serialize3D(Maze maze)
+        public static string Serialize3D(IMaze maze)
         {
             Debug.Assert(maze.Dimensions.Dimensionality == 3);
 
             var sb = new StringBuilder();
 
-            for (int z = maze.Dimensions[2] - 1; z >= -1; --z)
+            for (int z = 0; z <= maze.Dimensions[2]; ++z)
             {
-                for (int y = maze.Dimensions[1] - 1; y >= 0; --y)
+                for (int y = 0; y < maze.Dimensions[1]; ++y)
                 {
                     int IntersectionType(int x) =>
-                        (maze[x, y, z][5] ? 1 : 0) |
-                        (maze[x, y, z + 1][0] ? 2 : 0) |
-                        (maze[x - 1, y, z][5] ? 4 : 0) |
+                        (maze[x, y, z][2] ? 1 : 0) |
+                        (maze[x, y, z - 1][0] ? 2 : 0) |
+                        (maze[x - 1, y, z][2] ? 4 : 0) |
                         (maze[x, y, z][0] ? 8 : 0);
 
                     for (int x = 0; x < maze.Dimensions[0]; ++x)
                     {
                         sb.Append(corners[IntersectionType(x)]);
 
-                        bool upPath = !maze[x, y, z][1] && z >= 0,
-                             downPath = !maze[x, y, z + 1][4] && z + 1 < maze.Dimensions[2];
+                        bool downPath = !maze[x, y, z - 1][1] && z > 0,
+                             upPath = !maze[x, y, z][4] && z < maze.Dimensions[2];
                         if (upPath || downPath)
                         {
-                            int floorType = ((upPath ? 1 : 0) | (downPath ? 2 : 0)) - 1;
+                            int floorType = ((downPath ? 1 : 0) | (upPath ? 2 : 0)) - 1;
                             sb.Append(floors[floorType]);
                         }
                         else
                         {
-                            sb.Append(maze[x, y, z][5] ? '─' : ' ');
+                            sb.Append(maze[x, y, z][2] ? '─' : ' ');
                         }
                     }
                     sb.Append(corners[IntersectionType(maze.Dimensions[0])]);
                 }
-                if (z >= 0)
+                if (z < maze.Dimensions[2])
                     sb.Append('\n');
             }
 
@@ -203,24 +203,22 @@ public static class MazeSerializer
                 var maze = new Maze((layerWidth - 1) / 2, lines[0].Length / layerWidth, lines.Count - 1);
 
                 // Walls
-                for (int zi = 0; zi < maze.Dimensions[2]; ++zi)
+                for (int z = 0; z < maze.Dimensions[2]; ++z)
                 {
-                    int z = maze.Dimensions[2] - 1 - zi;
-                    for (int yi = 0; yi < maze.Dimensions[1]; ++yi)
+                    for (int y = 0; y < maze.Dimensions[1]; ++y)
                     {
-                        int y = maze.Dimensions[1] - 1 - yi;
-                        var line = lines[zi];
+                        var line = lines[z];
                         for (int x = 0; x < maze.Dimensions[0]; ++x)
                         {
-                            int ci = layerWidth * yi + 2 * x;
+                            int ci = layerWidth * y + 2 * x;
 
                             var wallBits = DecodeCorner(line[ci]);
                             var walls = maze[x, y, z];
                             if (x > 0) walls[0] = (wallBits & 8) != 0;
-                            if (zi > 0) walls[5] = (wallBits & 1) != 0;
+                            if (z > 0) walls[2] = (wallBits & 1) != 0;
 
-                            if (y > 0) walls[1] = (DecodeFloor(line[ci + 1]) & 1) == 0;
-                            if (yi > 0) walls[4] = (DecodeFloor(lines[zi + 1][ci + 1]) & 2) == 0;
+                            if (y > 0) walls[1] = (DecodeFloor(lines[z + 1][ci + 1]) & 1) == 0;
+                            if (y < maze.Dimensions[1] - 1) walls[4] = (DecodeFloor(line[ci + 1]) & 2) == 0;
                         }
                     }
                 }
@@ -229,53 +227,51 @@ public static class MazeSerializer
                 int i = 0;
                 var endpoints = new ImmutableVector<int>[2];
                 {
-                    var line = lines[maze.Dimensions[2]];
+                    var line = lines[0];
                     for (int y = 0; y < maze.Dimensions[1]; ++y)
                     {
-                        int yi = maze.Dimensions[1] - 1 - y;
                         for (int x = 0; x < maze.Dimensions[0]; ++x)
                         {
-                            if ((DecodeCorner(line[layerWidth * yi + 2 * x]) & 1) == 0)
+                            if ((DecodeCorner(line[layerWidth * y + 2 * x]) & 1) == 0)
                                 endpoints[i++] = new ImmutableVector<int>(x, y, -1);
                         }
                     }
                 }
                 for (int z = 0; z < maze.Dimensions[2]; ++z)
                 {
-                    var line = lines[maze.Dimensions[2] - 1 - z];
+                    var line = lines[z + 1];
                     {
-                        int ci = layerWidth * (maze.Dimensions[1] - 1);
                         for (int x = 0; x < maze.Dimensions[0]; ++x)
                         {
-                            if ((DecodeFloor(line[ci + 2 * x + 1]) & 1) != 0)
+                            if ((DecodeFloor(line[2 * x + 1]) & 1) != 0)
                                 endpoints[i++] = new ImmutableVector<int>(x, -1, z);
                         }
                     }
+                    line = lines[z];
                     for (int y = 0; y < maze.Dimensions[1]; ++y)
                     {
-                        int ci = layerWidth * (maze.Dimensions[1] - 1 - y);
+                        int ci = layerWidth * y;
                         if ((DecodeCorner(line[ci]) & 8) == 0)
                             endpoints[i++] = new ImmutableVector<int>(-1, y, z);
                         if ((DecodeCorner(line[ci + layerWidth - 1]) & 8) == 0)
                             endpoints[i++] = new ImmutableVector<int>(maze.Dimensions[0], y, z);
                     }
-                    line = lines[maze.Dimensions[2] - z];
                     {
+                        int ci = layerWidth * (maze.Dimensions[1] - 1);
                         for (int x = 0; x < maze.Dimensions[0]; ++x)
                         {
-                            if ((DecodeFloor(line[2 * x + 1]) & 2) != 0)
+                            if ((DecodeFloor(line[ci + 2 * x + 1]) & 2) != 0)
                                 endpoints[i++] = new ImmutableVector<int>(x, maze.Dimensions[1], z);
                         }
                     }
                 }
                 {
-                    var line = lines[0];
+                    var line = lines[maze.Dimensions[2]];
                     for (int y = 0; y < maze.Dimensions[1]; ++y)
                     {
-                        int yi = maze.Dimensions[1] - 1 - y;
                         for (int x = 0; x < maze.Dimensions[0]; ++x)
                         {
-                            if ((DecodeCorner(line[layerWidth * yi + 2 * x]) & 1) == 0)
+                            if ((DecodeCorner(line[layerWidth * y + 2 * x]) & 1) == 0)
                                 endpoints[i++] = new ImmutableVector<int>(x, y, maze.Dimensions[2]);
                         }
                     }

@@ -74,7 +74,7 @@ namespace Labyrinth2D
             Regenerate();
         }
 
-        public static int IntersectionType(Maze maze, int x, int y) =>
+        public static int IntersectionType(IMaze maze, int x, int y) =>
             (maze[x, y][1] ? 1 : 0) |
             (maze[x, y - 1][0] ? 2 : 0) |
             (maze[x - 1, y][1] ? 4 : 0) |
