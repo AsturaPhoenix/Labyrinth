@@ -13,22 +13,22 @@ namespace Labyrinth3D2D
         public GameObject Ground, Wall, Entrance, Exit, SettingsMenu;
         public Rigidbody Player;
 
-        private Maze maze;
+        private IMaze maze;
         private GameObject mazeElements;
 
-        private Vector3 WallSpace(float x, float y) => new Vector3(x - maze.Dimensions[0] / 2.0f, 0, maze.Dimensions[1] / 2.0f - y);
+        private Vector3 WallSpace(float x, float y) => new Vector3(x, 0, y);
         private Vector3 CellSpace(IList<int> coordinate) => WallSpace(coordinate[0] + .5f, coordinate[1] + .5f);
 
-        private Quaternion FaceMaze(IList<int> coordinate) => Quaternion.AngleAxis(90 * maze.IngressDirection(coordinate) - 90, Vector3.up);
+        private Quaternion FaceMaze(IList<int> coordinate) => Quaternion.AngleAxis(-90 * maze.IngressDirection(coordinate) - 90, Vector3.up);
 
         int[] Game.Dimensions => Dimensions;
 
         public void NewMaze()
         {
-            maze = new Maze(Dimensions);
-
+            var maze = new Maze(Dimensions);
             DisjointSetMazeGenerator.Generate(maze);
             LongestPathEndpointGenerator.Generate(maze, maze.Dimensions[0] / 2, 0);
+            this.maze = maze;
 
             MazeUpdated();
         }
@@ -40,11 +40,11 @@ namespace Labyrinth3D2D
             return settings;
         }
 
-        public string Export() => MazeSerializer.BoxDrawing.Serialize2D(maze);
+        public string Export() => MazeSerializer.BoxDrawing.Serialize2D(maze.Swizzle(0, 3));
 
         public bool Import(string serialized)
         {
-            var newMaze = MazeSerializer.BoxDrawing.Deserialize2D(serialized);
+            var newMaze = MazeSerializer.BoxDrawing.Deserialize2D(serialized).Swizzle(0, 3);
             if (newMaze == null)
                 return false;
 
