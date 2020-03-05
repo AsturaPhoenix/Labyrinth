@@ -48,7 +48,8 @@ namespace Labyrinth3D
         public GameObject Settings()
         {
             var settings = Instantiate(SettingsMenu);
-            settings.GetComponent<Settings>().Game = this;
+            settings.GetComponent<global::Settings>().Game = this;
+            settings.GetComponent<Settings>().Render = this;
             return settings;
         }
 
@@ -67,11 +68,7 @@ namespace Labyrinth3D
 
         private void MazeUpdated()
         {
-            Destroy(mazeElements);
             Player.velocity = Vector3.zero;
-
-            mazeElements = new GameObject();
-            mazeElements.transform.parent = transform;
 
             Entrance.transform.localPosition = CellSpace(maze.Entrance);
             Entrance.transform.localRotation = FaceMaze(maze.Entrance);
@@ -80,6 +77,18 @@ namespace Labyrinth3D
 
             Player.transform.localPosition = Entrance.transform.localPosition;
             Player.transform.localRotation = Entrance.transform.localRotation;
+
+            UpdateModels();
+        }
+
+        private Transform MazeElement(GameObject template) => Instantiate(template, mazeElements.transform).transform;
+
+        public void UpdateModels()
+        {
+            Destroy(mazeElements);
+
+            mazeElements = new GameObject();
+            mazeElements.transform.parent = transform;
 
             for (int z = 0; z <= maze.Dimensions[2]; ++z)
             {
@@ -129,8 +138,6 @@ namespace Labyrinth3D
                 }
             }
         }
-
-        private Transform MazeElement(GameObject template) => Instantiate(template, mazeElements.transform).transform;
 
         private void Start() => NewMaze();
     }
