@@ -137,6 +137,9 @@ namespace Labyrinth3D
                     }
                 }
             }
+
+            float endpointScale = 1 - Edge.GetComponent<Renderer>().bounds.size.z;
+            Exit.transform.localScale = Entrance.transform.localScale = endpointScale * Vector3.one;
         }
 
         private void Start() => NewMaze();
