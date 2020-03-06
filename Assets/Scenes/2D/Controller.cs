@@ -110,13 +110,13 @@ namespace Labyrinth2D
 
         private void Update()
         {
-            if (Input.GetAxis("X") < 0)
+            if (Input.GetAxis("X") < 0 || Input.GetAxis("X (Yaw-Locked)") < 0)
                 EnqueueDirection(0);
-            if (Input.GetAxis("X") > 0)
+            if (Input.GetAxis("X") > 0 || Input.GetAxis("X (Yaw-Locked)") > 0)
                 EnqueueDirection(2);
-            if (Input.GetAxis("Z") < 0)
+            if (Input.GetAxis("Z") < 0 || Input.GetAxis("Z (Pitch-Locked)") < 0)
                 EnqueueDirection(1);
-            if (Input.GetAxis("Z") > 0)
+            if (Input.GetAxis("Z") > 0 || Input.GetAxis("Z (Pitch-Locked)") > 0)
                 EnqueueDirection(3);
         }
 
