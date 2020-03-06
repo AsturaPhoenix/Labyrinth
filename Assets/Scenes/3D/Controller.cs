@@ -42,7 +42,7 @@ namespace Labyrinth3D
             Vector3 euler = physics.rotation.eulerAngles;
             float nex = Mathf.Clamp(NormalizeDegreesAboutZero(euler.x) / 90, -1, 1);
             physics.AddRelativeTorque(
-                AngularAcceleration * Mathf.Clamp(Input.GetAxis("Pitch"), -1 - nex, 1 - nex),
+                AngularAcceleration * (Mathf.Clamp(Input.GetAxis("Pitch"), -1 - nex, 1 - nex) - Input.GetAxis("Jump") * nex),
                 0,
                 RotateTowards(-euler.z, LevelingAcceleration), ForceMode.Acceleration);
 
