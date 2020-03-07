@@ -1,17 +1,29 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Labyrinth3D
 {
     public class Controller : MonoBehaviour
     {
-        public float Acceleration, Speed, AngularAcceleration, AngularEquilibriumConstant, LevelingAcceleration, ScrollMultiplier = 1, ScrollAheadTime;
+        public InputActionAsset InputActions;
+        public float Acceleration, Speed, AngularAcceleration, AngularEquilibriumConstant, LevelingAcceleration, ScrollAheadTime;
 
         private Rigidbody physics;
         private Vector2 scroll = new Vector2();
 
+        private InputAction look, clampedPitch, resetPitch, strafe, scrollStrafe, thrust;
+
         private void Start()
         {
             physics = GetComponent<Rigidbody>();
+            look = InputActions["Look"];
+            clampedPitch = InputActions["Clamped Pitch"];
+            resetPitch = InputActions["Reset Pitch"];
+            strafe = InputActions["Strafe"];
+            scrollStrafe = InputActions["Scroll Strafe"];
+            thrust = InputActions["Thrust"];
+            InputActions.Enable();
+
             Cursor.lockState = CursorLockMode.Locked;
         }
 
@@ -20,46 +32,30 @@ namespace Labyrinth3D
             GetComponentInParent<GameMenuLauncher>().Show();
         }
 
-        private void Update()
-        {
-            scroll += ScrollMultiplier * Input.mouseScrollDelta;
-            float scrollAheadFrames = ScrollAheadTime / Time.fixedDeltaTime;
-            scroll.x = Mathf.Clamp(scroll.x, -scrollAheadFrames, scrollAheadFrames);
-            scroll.y = Mathf.Clamp(scroll.y, -scrollAheadFrames, scrollAheadFrames);
-
-            physics.AddTorque(0, AngularAcceleration * Input2.GetAxis("Frame Yaw"), 0, ForceMode.Acceleration);
-            physics.AddRelativeTorque(AngularAcceleration * Input2.GetAxis("Frame Pitch"), 0, 0, ForceMode.Acceleration);
-        }
-
         private static float NormalizeDegreesAboutZero(float degrees) => (degrees % 360 + 360 + 180) % 360 - 180;
         private float RotateTowards(float degreesRemaining, float angularAcceleration) =>
             Mathf.Clamp(AngularEquilibriumConstant * NormalizeDegreesAboutZero(degreesRemaining) * Mathf.Deg2Rad, -angularAcceleration, angularAcceleration);
 
         private void FixedUpdate()
         {
-            physics.AddTorque(0, AngularAcceleration * Input.GetAxis("Yaw"), 0, ForceMode.Acceleration);
+            var lookVector = look.ReadValue<Vector2>();
 
             Vector3 euler = physics.rotation.eulerAngles;
             float nex = Mathf.Clamp(NormalizeDegreesAboutZero(euler.x) / 90, -1, 1);
-            physics.AddRelativeTorque(
-                AngularAcceleration * (Mathf.Clamp(Input.GetAxis("Pitch"), -1 - nex, 1 - nex) - Input.GetAxis("Jump") * nex),
-                0,
+            
+            lookVector.y += Mathf.Clamp(clampedPitch.ReadValue<float>(), -1 + nex, 1 + nex) + resetPitch.ReadValue<float>() * nex;
+
+            physics.AddTorque(0, AngularAcceleration * lookVector.x, 0, ForceMode.Acceleration);
+            physics.AddRelativeTorque(-AngularAcceleration * lookVector.y, 0,
                 RotateTowards(-euler.z, LevelingAcceleration), ForceMode.Acceleration);
+            
+            scroll += scrollStrafe.ReadValue<Vector2>();
+            float scrollAheadFrames = ScrollAheadTime / Time.fixedDeltaTime;
+            scroll.x = Mathf.Clamp(scroll.x, -scrollAheadFrames, scrollAheadFrames);
+            scroll.y = Mathf.Clamp(scroll.y, -scrollAheadFrames, scrollAheadFrames);
 
-            Vector3 direction = new Vector3();
-
-            if (Input.GetKey(KeyCode.A))
-                --direction.x;
-            if (Input.GetKey(KeyCode.D))
-                ++direction.x;
-            if (Input.GetKey(KeyCode.W) || Input.GetMouseButton(0))
-                ++direction.z;
-            if (Input.GetKey(KeyCode.S) || Input.GetMouseButton(1))
-                --direction.z;
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.R))
-                ++direction.y;
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.F))
-                --direction.y;
+            var strafeVector = strafe.ReadValue<Vector2>();
+            Vector3 direction = new Vector3(strafeVector.x, strafeVector.y, thrust.ReadValue<float>());
 
             if (scroll.x >= 1)
             {
