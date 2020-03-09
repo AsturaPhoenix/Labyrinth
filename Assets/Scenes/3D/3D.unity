@@ -607,6 +607,7 @@ GameObject:
   - component: {fileID: 2029623706}
   - component: {fileID: 2029623709}
   - component: {fileID: 2029623712}
+  - component: {fileID: 2029623713}
   - component: {fileID: 2029623711}
   - component: {fileID: 2029623710}
   m_Layer: 0
@@ -700,7 +701,6 @@ MonoBehaviour:
   AngularAcceleration: 90
   AngularEquilibriumConstant: 100
   LevelingAcceleration: 50
-  ScrollMultiplier: 8
   ScrollAheadTime: 0.5
 --- !u!135 &2029623710
 SphereCollider:
@@ -743,3 +743,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 784d4b70c1e405a439fc728742d47908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2029623713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029623705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8bdbb8783f677a4bb0f465a659d7ea1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScaleFactor: 2

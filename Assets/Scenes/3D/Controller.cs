@@ -9,13 +9,18 @@ namespace Labyrinth3D
         public float Acceleration, Speed, AngularAcceleration, AngularEquilibriumConstant, LevelingAcceleration, ScrollAheadTime;
 
         private Rigidbody physics;
-        private Vector2 scroll = new Vector2();
+        private TouchManipulation touch;
+        private Vector2 scroll;
+        private Vector2 touchLook;
+        private float pinchThrottle;
 
         private InputAction look, clampedPitch, resetPitch, strafe, scrollStrafe, thrust;
 
         private void Start()
         {
             physics = GetComponent<Rigidbody>();
+            touch = GetComponent<TouchManipulation>();
+
             look = InputActions["Look"];
             clampedPitch = InputActions["Clamped Pitch"];
             resetPitch = InputActions["Reset Pitch"];
@@ -23,7 +28,7 @@ namespace Labyrinth3D
             scrollStrafe = InputActions["Scroll Strafe"];
             thrust = InputActions["Thrust"];
             InputActions.Enable();
-
+            
             Cursor.lockState = CursorLockMode.Locked;
         }
 
@@ -38,7 +43,9 @@ namespace Labyrinth3D
 
         private void FixedUpdate()
         {
-            var lookVector = look.ReadValue<Vector2>();
+            touchLook = touch.Delta == null ? Vector2.zero : touchLook + touch.Delta.Value;
+
+            var lookVector = look.ReadValue<Vector2>() + touchLook;
 
             Vector3 euler = physics.rotation.eulerAngles;
             float nex = Mathf.Clamp(NormalizeDegreesAboutZero(euler.x) / 90, -1, 1);
@@ -53,9 +60,12 @@ namespace Labyrinth3D
             float scrollAheadFrames = ScrollAheadTime / Time.fixedDeltaTime;
             scroll.x = Mathf.Clamp(scroll.x, -scrollAheadFrames, scrollAheadFrames);
             scroll.y = Mathf.Clamp(scroll.y, -scrollAheadFrames, scrollAheadFrames);
-
+            
             var strafeVector = strafe.ReadValue<Vector2>();
-            Vector3 direction = new Vector3(strafeVector.x, strafeVector.y, thrust.ReadValue<float>());
+            pinchThrottle = touch.ScaleDelta == null? 0 : Mathf.Clamp((pinchThrottle + 1) * touch.ScaleDelta.Value - 1, -.9f, 1);
+
+            Vector3 direction = new Vector3(strafeVector.x, strafeVector.y,
+                thrust.ReadValue<float>() + pinchThrottle);
 
             if (scroll.x >= 1)
             {
@@ -78,9 +88,11 @@ namespace Labyrinth3D
                 ++scroll.y;
             }
 
+            float speedLimit = pinchThrottle == 0 ? Speed : Mathf.Abs(pinchThrottle) * Speed;
+
             Vector3 acceleration = Acceleration * (physics.rotation * direction.normalized);
-            if ((physics.velocity + acceleration * Time.fixedDeltaTime).sqrMagnitude > Speed * Speed)
-                acceleration = Vector3.ClampMagnitude(acceleration, Speed / physics.velocity.magnitude);
+            if ((physics.velocity + acceleration * Time.fixedDeltaTime).sqrMagnitude > speedLimit * speedLimit)
+                acceleration = Vector3.ClampMagnitude(acceleration, speedLimit / physics.velocity.magnitude);
 
             physics.AddForce(acceleration, ForceMode.Acceleration);
         }
