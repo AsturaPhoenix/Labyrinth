@@ -10,7 +10,7 @@ public class MenuScaler : MonoBehaviour
     {
         int minDim = Mathf.Min(Screen.width, Screen.height);
         GetComponent<CanvasScaler>().scaleFactor = Mathf.Min(
-            Screen.dpi / ReferenceDpi,
+            Screen.dpi == 0 ? 1 : Screen.dpi / ReferenceDpi,
             minDim / MinSize.x,
             minDim / MinSize.y);
     }
